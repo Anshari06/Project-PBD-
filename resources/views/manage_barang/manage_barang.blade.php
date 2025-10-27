@@ -85,7 +85,8 @@
                                         <th style="width:70px">ID</th>
                                         <th>Nama Barang</th>
                                         <th>Harga</th>
-                                        <th>Stok</th>
+                                        <th>Jenis</th>
+                                        <th>Satuan</th>
                                         <th style="width:180px">Actions</th>
                                     </tr>
                                 </thead>
@@ -96,7 +97,23 @@
                                             <td>{{ $barang->idbarang}}</td>
                                             <td>{{ $barang->nama ?? '-' }}</td>
                                             <td>{{ $barang->harga ?? '-' }}</td>
-                                            <td>{{ $barang->stok ?? '-' }}</td>
+                                            <td>
+                                                @switch($barang->jenis)
+                                                    @case('M')
+                                                        Makanan
+                                                        @break
+                                                    @case('K')
+                                                        Kebutuhan
+                                                        @break
+                                                    @case('J')
+                                                        Jasa
+                                                        @break
+                                                    @default
+                                                        {{ $barang->jenis ?? '-' }}
+                                                @endswitch
+                                            </td>
+
+                                            <td>{{ $barang->nama_satuan ?? '-' }}</td>
                                             <td>
                                                 <a href="{{ url('/manage_barang/' . ($barang->idbarang ?? $barang->id) . '/edit') }}"
                                                     class="btn btn-sm btn-warning me-1">Edit</a>

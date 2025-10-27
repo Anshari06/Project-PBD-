@@ -30,15 +30,47 @@
         <div class="flex-grow-1" style="overflow-y: auto;">
 
             <div class="container-fluid p-3">
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                    <div>
-                        <h2 class="mb-0">User Management</h2>
-                        <p class="text-muted small mb-0">Here you can manage users of the system.
-                        </p>
+                <div class="mb-3">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <div>
+                            <h2 class="mb-0">User Management</h2>
+                            <p class="text-muted small mb-0">Here you can manage users of the
+                                system.</p>
+                        </div>
                     </div>
-                    <div>
-                        <a href="{{ url('/manage_user/create') }}" class="btn btn-primary btn-sm">+
-                            Add User</a>
+
+                    <!-- Inline Add User Form (polished) -->
+                    <div class="card mb-3">
+                        <div class="card-header py-2">
+                            <strong class="small mb-0">Add User</strong>
+                        </div>
+                        <div class="card-body">
+                            <form action="{{ url('/manage_user') }}" method="POST"
+                                class="row g-2 align-items-end">
+                                @csrf
+                                <div class="col-md-4">
+                                    <label for="username" class="visually-hidden">Username</label>
+                                    <input type="text" name="username" id="username"
+                                        class="form-control form-control-sm" placeholder="Username"
+                                        required autofocus>
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="password" class="visually-hidden">Password</label>
+                                    <input type="password" name="password" id="password"
+                                        class="form-control form-control-sm" placeholder="Password"
+                                        required>
+                                </div>
+                                <div class="col-md-2">
+                                    <label for="idrole" class="visually-hidden">Role ID</label>
+                                    <input type="number" name="idrole" id="idrole"
+                                        class="form-control form-control-sm" placeholder="Role ID">
+                                </div>
+                                <div class="col-md-2 text-end">
+                                    <button type="submit" class="btn btn-primary btn-sm w-100">Add
+                                        User</button>
+                                </div>
+                            </form>
+                        </div>
                     </div>
                 </div>
 
@@ -48,6 +80,7 @@
                             <table class="table table-striped mb-0">
                                 <thead>
                                     <tr>
+                                        <th style="width:70px">Number</th>
                                         <th style="width:70px">ID</th>
                                         <th>Name</th>
                                         <th>Password</th>
@@ -56,18 +89,20 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @forelse($users ?? collect() as $user)
+                                    @forelse($users as $user)
                                         <tr>
+                                            <td>{{ $loop->iteration }}</td>
                                             <td>{{ $user->iduser }}</td>
                                             <td>{{ $user->username }}</td>
                                             <td>{{ $user->password }}</td>
-                                            <td>{{ $user->idrole ?? '-' }}</td>
+                                            <td>{{ $user->nama_role ?? '-' }}</td>
                                             <td>
                                                 <a href="{{ url('/manage_user/' . $user->iduser . '/edit') }}"
                                                     class="btn btn-sm btn-warning me-1">Edit</a>
                                                 <a href="{{ url('/manage_user/' . $user->iduser) }}"
                                                     class="btn btn-sm btn-info me-1">View</a>
-                                                <form action="{{ url('/manage_user/' . $user->iduser) }}"
+                                                <form
+                                                    action="{{ url('/manage_user/' . $user->iduser) }}"
                                                     method="POST" class="d-inline"
                                                     onsubmit="return confirm('Hapus user ini?');">
                                                     @csrf
@@ -79,7 +114,7 @@
                                         </tr>
                                     @empty
                                         <tr>
-                                            <td colspan="5" class="text-center py-4">No users
+                                            <td colspan="6" class="text-center py-4">No users
                                                 found</td>
                                         </tr>
                                     @endforelse

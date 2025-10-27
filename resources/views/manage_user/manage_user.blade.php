@@ -66,8 +66,7 @@
                                         class="form-control form-control-sm" placeholder="Role ID">
                                 </div>
                                 <div class="col-md-2 text-end">
-                                    <button type="submit" class="btn btn-primary btn-sm w-100">Add
-                                        User</button>
+                                    <button type="submit" class="btn btn-primary btn-sm w-100">Add User</button>
                                 </div>
                             </form>
                         </div>
@@ -114,8 +113,7 @@
                                         </tr>
                                     @empty
                                         <tr>
-                                            <td colspan="6" class="text-center py-4">No users
-                                                found</td>
+                                            <td colspan="6" class="text-center py-4">No users found</td>
                                         </tr>
                                     @endforelse
                                 </tbody>

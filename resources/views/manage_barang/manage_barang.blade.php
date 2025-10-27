@@ -34,8 +34,7 @@
                     <div class="d-flex justify-content-between align-items-center mb-2">
                         <div>
                             <h2 class="mb-0">Barang Management</h2>
-                            <p class="text-muted small mb-0">Here you can manage items (barang) of
-                                the system.</p>
+                            <p class="text-muted small mb-0">Here you can manage items (barang) of the system.</p>
                         </div>
                     </div>
 
@@ -132,8 +131,7 @@
                                         </tr>
                                     @empty
                                         <tr>
-                                            <td colspan="6" class="text-center py-4">No barang
-                                                found</td>
+                                            <td colspan="6" class="text-center py-4">No barang found</td>
                                         </tr>
                                     @endforelse
                                 </tbody>

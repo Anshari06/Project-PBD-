@@ -50,7 +50,7 @@
                                     <tr>
                                         <th style="width:70px">ID</th>
                                         <th>Name</th>
-                                        <th>Email</th>
+                                        <th>Password</th>
                                         <th>Role</th>
                                         <th style="width:180px">Actions</th>
                                     </tr>
@@ -58,16 +58,16 @@
                                 <tbody>
                                     @forelse($users ?? collect() as $user)
                                         <tr>
-                                            <td>{{ $user->id }}</td>
-                                            <td>{{ $user->name }}</td>
-                                            <td>{{ $user->email }}</td>
-                                            <td>{{ $user->role ?? '-' }}</td>
+                                            <td>{{ $user->iduser }}</td>
+                                            <td>{{ $user->username }}</td>
+                                            <td>{{ $user->password }}</td>
+                                            <td>{{ $user->idrole ?? '-' }}</td>
                                             <td>
-                                                <a href="{{ url('/manage_user/' . $user->id . '/edit') }}"
+                                                <a href="{{ url('/manage_user/' . $user->iduser . '/edit') }}"
                                                     class="btn btn-sm btn-warning me-1">Edit</a>
-                                                <a href="{{ url('/manage_user/' . $user->id) }}"
+                                                <a href="{{ url('/manage_user/' . $user->iduser) }}"
                                                     class="btn btn-sm btn-info me-1">View</a>
-                                                <form action="{{ url('/manage_user/' . $user->id) }}"
+                                                <form action="{{ url('/manage_user/' . $user->iduser) }}"
                                                     method="POST" class="d-inline"
                                                     onsubmit="return confirm('Hapus user ini?');">
                                                     @csrf

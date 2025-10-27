@@ -9,3 +9,5 @@ Route::get('/', [DashboardController::class, 'index']);
 
 // Manage user list via controller so the view receives the $users data
 Route::get('/manage_user', [ManageUserController::class, 'index']);
+
+Route::get('/manage_barang', [App\Http\Controllers\BarangController::class, 'index']);

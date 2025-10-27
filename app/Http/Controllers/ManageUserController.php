@@ -14,6 +14,7 @@ class ManageUserController extends Controller
         $sql = 'SELECT * FROM user_role_vu ORDER BY iduser';
         $users = DB::select($sql);
 
-        return view('manage_user', compact('users'));
+    // so reference it as 'manage_user.manage_user'
+    return view('manage_user.manage_user', compact('users'));
     }
 }

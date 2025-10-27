@@ -1,0 +1,94 @@
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
+        crossorigin="anonymous">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <title>Dashboard</title>
+</head>
+
+<body class="d-flex" style="min-height: 100vh; overflow: hidden;">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+        crossorigin="anonymous"></script>
+
+    {{-- Sidebar --}}
+    <x-sidebar></x-sidebar>
+
+    {{-- Main Content Area --}}
+    <main class="flex-grow-1 d-flex flex-column" style="height: 100vh; overflow: hidden;">
+        {{-- Header Fixed --}}
+        <x-header>Manage Users</x-header>
+
+        {{-- Content Area with Scroll --}}
+        <div class="flex-grow-1" style="overflow-y: auto;">
+
+            <div class="container-fluid p-3">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <div>
+                        <h2 class="mb-0">User Management</h2>
+                        <p class="text-muted small mb-0">Here you can manage users of the system.
+                        </p>
+                    </div>
+                    <div>
+                        <a href="{{ url('/manage_user/create') }}" class="btn btn-primary btn-sm">+
+                            Add User</a>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-striped mb-0">
+                                <thead>
+                                    <tr>
+                                        <th style="width:70px">ID</th>
+                                        <th>Name</th>
+                                        <th>Email</th>
+                                        <th>Role</th>
+                                        <th style="width:180px">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @forelse($users ?? collect() as $user)
+                                        <tr>
+                                            <td>{{ $user->id }}</td>
+                                            <td>{{ $user->name }}</td>
+                                            <td>{{ $user->email }}</td>
+                                            <td>{{ $user->role ?? '-' }}</td>
+                                            <td>
+                                                <a href="{{ url('/manage_user/' . $user->id . '/edit') }}"
+                                                    class="btn btn-sm btn-warning me-1">Edit</a>
+                                                <a href="{{ url('/manage_user/' . $user->id) }}"
+                                                    class="btn btn-sm btn-info me-1">View</a>
+                                                <form action="{{ url('/manage_user/' . $user->id) }}"
+                                                    method="POST" class="d-inline"
+                                                    onsubmit="return confirm('Hapus user ini?');">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button
+                                                        class="btn btn-sm btn-danger">Delete</button>
+                                                </form>
+                                            </td>
+                                        </tr>
+                                    @empty
+                                        <tr>
+                                            <td colspan="5" class="text-center py-4">No users
+                                                found</td>
+                                        </tr>
+                                    @endforelse
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</body>

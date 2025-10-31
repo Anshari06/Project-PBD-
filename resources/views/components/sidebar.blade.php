@@ -34,6 +34,10 @@
             <x-nav-link href="/manage_barang" :active="request()->is('manage_barang')" icn="bi bi-box-seam me-2">
                 Manage Barang</x-nav-link>
         </li>
+        <li>
+            <x-nav-link href="/manage_satuan" :active="request()->is('manage_satuan')" icn="bi bi-tags me-2">
+                Manage Satuan</x-nav-link>
+        </li>
         <li class="nav-item">
             <x-nav-link href="/orders" :active="request()->is('orders')" icn="bi bi-table me-2">Orders</x-nav-link>
         </li>

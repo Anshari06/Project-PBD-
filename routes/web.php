@@ -7,7 +7,11 @@ use App\Http\Controllers\ManageUserController;
 // dashboard route handled by controller
 Route::get('/', [DashboardController::class, 'index']);
 
-// Manage user list via controller so the view receives the $users data
+// Manage user
 Route::get('/manage_user', [ManageUserController::class, 'index']);
 
+// Manage Barang route
 Route::get('/manage_barang', [App\Http\Controllers\BarangController::class, 'index']);
+
+// Manage Satuan route
+Route::get('/manage_satuan', [App\Http\Controllers\SatuanController::class, 'index']);

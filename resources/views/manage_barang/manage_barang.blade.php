@@ -39,8 +39,8 @@
                     </div>
                 </div>
 
-                    <!-- Inline Add User Form (polished) -->
-                    <div class="card mb-3">
+                <!-- Inline Add User Form (polished) -->
+                <div class="card mb-3">
                         <div class="card-header py-2">
                             <strong class="small mb-0">Add Barang</strong>
                         </div>

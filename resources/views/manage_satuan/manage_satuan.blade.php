@@ -159,22 +159,23 @@
                         <table class="table table-striped">
                             <thead>
                                 <tr>
-                                    <th>ID</th>
+                                    <th>#</th>
+                                    <th>ID Barang</th>
+                                    <th>Nama Barang</th>
                                     <th>Nama Satuan</th>
-                                    <th>Status</th>
-                                    <th>Jenis</th>
+                                    <th>Harga</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                @if (isset($FilterSatuan))
-                                    @if (!empty($FilterSatuan))
-                                        @foreach ($filterSatuan as $satuan)
+                                @if (isset($satuanByID))
+                                    @if (!empty($satuanByID))
+                                        @foreach ($satuanByID as $satuan)
                                             <tr>
-                                                <td>{{ $satuan->idsatuan }}</td>
+                                                <td>{{ $loop->iteration }}</td>
+                                                <td>{{ $satuan->idbarang }}</td>
+                                                <td>{{ $satuan->nama }}</td>
                                                 <td>{{ $satuan->nama_satuan }}</td>
-                                                <td>{{ $satuan->status == 1 ? 'Aktif' : 'Non-aktif' }}
-                                                </td>
-                                                <td>{{ $satuan->jenis ?? '-' }}</td>
+                                                <td>{{ $satuan->harga }}</td>
                                             </tr>
                                         @endforeach
                                     @else

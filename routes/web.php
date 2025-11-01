@@ -14,5 +14,5 @@ Route::get('/manage_user', [ManageUserController::class, 'index']);
 Route::get('/manage_barang', [App\Http\Controllers\BarangController::class, 'index']);
 
 // Manage Satuan route
-// Route::get('/manage_satuan', [App\Http\Controllers\SatuanController::class, 'index']);
-Route::match(['get', 'post'], '/manage_satuan', [App\Http\Controllers\SatuanController::class, 'index']);
+Route::get('/manage_satuan', [App\Http\Controllers\SatuanController::class, 'index']);
+Route::post('/manage_satuan', [App\Http\Controllers\SatuanController::class, 'store']);

@@ -8,13 +8,18 @@ use Illuminate\Support\Facades\Schema;
 
 class BarangController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
         $sql = 'SELECT * FROM barang_satuan_vu ORDER BY idbarang';
         $barangs = DB::select($sql);
 
-    // Blade file currently lives at resources/views/manage_barang.blade.php
-    // so return the flat view name 'manage_barang'
-    return view('manage_barang.manage_barang', compact('barangs'));
+        // ini buat nangkep inputan dari form
+        $cariBarangs = [];
+
+        $nama_barang = $request->input('nama_barang');
+        $cariBarangs = DB::select('CALL cari_barang(?)', [$nama_barang]);
+
+
+        return view('manage_barang.manage_barang', compact('barangs', 'cariBarangs'));
     }
 }

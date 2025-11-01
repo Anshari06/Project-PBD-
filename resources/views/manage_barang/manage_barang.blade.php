@@ -152,19 +152,27 @@
 
                 </div>
 
+                {{-- Cari Barang --}}
                 <div class="card m-3">
                     <div class="card-header py-2">
                         <strong class="small mb-0">Search Data Barang</strong>
                     </div>
                     <div class="card-body">
-                        <form action=" {{ url('/manage_barang') }} " method="GET"
+                        <form action="{{ url('/manage_barang') }}" method="GET"
                             class="row g-2 align-items-end">
-                            @csrf
-                            <div class="col-md-4">
-                                <label for="nama_barang" class="form-label">ID
-                                    Barang:</label>
-                                <input type="text" name="id_barang" id="id_barang
-                        <div class="table-responsive">
+                            <div class="col-md-5">
+                                <label for="nama_barang" class="form-label">Nama Barang</label>
+                                <input type="text" name="nama_barang" id="nama_barang"
+                                    class="form-control form-control-sm"
+                                    value="{{ request('nama_barang') }}">
+                            </div>
+                            <div class="col-md-2 d-flex align-items-end">
+                                <button type="submit"
+                                    class="btn btn-primary btn-sm w-100">Search</button>
+                            </div>
+                        </form>
+
+                        <div class="table-responsive mt-4">
                             <table class="table table-striped mb-0">
                                 <thead>
                                     <tr>
@@ -177,10 +185,45 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    
-                        
-                </div>
+                                    @forelse($cariBarangs as $barang)
+                                        <tr>
+                                            <td>{{ $loop->iteration }}</td>
+                                            <td>{{ $barang->idbarang }}</td>
+                                            <td>{{ $barang->nama ?? '-' }}</td>
+                                            <td>{{ $barang->harga ?? '-' }}</td>
+                                            <td>
+                                                @switch($barang->jenis)
+                                                    @case('M')
+                                                        Makanan
+                                                    @break
 
-            </div>
+                                                    @case('K')
+                                                        Kebutuhan
+                                                    @break
+
+                                                    @case('J')
+                                                        Jasa
+                                                    @break
+
+                                                    @default
+                                                        {{ $barang->jenis ?? '-' }}
+                                                @endswitch
+                                            </td>
+
+                                            <td>{{ $barang->idsatuan->nama_satuan ?? '-' }}</td>
+                                        </tr>
+                                    @empty
+                                        <tr>
+                                            <td colspan="6" class="text-center py-4">No barang
+                                                found
+                                            </td>
+                                        </tr>
+                                    @endforelse
+                                </tbody>
+                            </table>
+
+                        </div>
+                    </div>
+                </div>
         </main>
     </body>

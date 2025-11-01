@@ -17,4 +17,5 @@ class ManageUserController extends Controller
         // so reference it as 'manage_user.manage_user'
         return view('manage_user.manage_user', compact('users'));
     }
+    
 }

@@ -24,7 +24,7 @@
     {{-- Main Content Area --}}
     <main class="flex-grow-1 d-flex flex-column" style="height: 100vh; overflow: hidden;">
         {{-- Header Fixed --}}
-        <x-header>Manage Barang</x-header>
+        <x-header>Manage Satuan</x-header>
 
         {{-- Content Area with Scroll --}}
         <div class="flex-grow-1" style="overflow-y: auto;">
@@ -33,46 +33,47 @@
                 <div class="mb-3">
                     <div class="d-flex justify-content-between align-items-center mb-2">
                         <div>
-                            <h2 class="mb-0">Barang Management</h2>
-                            <p class="text-muted small mb-0">Here you can manage items (barang) of the system.</p>
+                            <h2 class="mb-0">Satuan Management</h2>
+                            <p class="text-muted small mb-0">Here you can manage items (Satuan) of
+                                the system.</p>
                         </div>
                     </div>
                 </div>
 
                 <!-- Inline Add User Form (polished) -->
                 <div class="card mb-3">
-                        <div class="card-header py-2">
-                            <strong class="small mb-0">Add Barang</strong>
-                        </div>
-                        <div class="card-body">
-                            <form action="{{ url('/manage_barang') }}" method="POST"
-                                class="row g-2 align-items-end">
-                                @csrf
-                                <div class="col-md-4">
-                                    <label for="namabarang" class="visually-hidden">Nama Barang</label>
-                                    <input type="text" name="namabarang" id="namabarang"
-                                        class="form-control form-control-sm"
-                                        placeholder="Nama Barang" required autofocus
-                                        value="{{ old('namabarang') }}">
-                                </div>
-                                <div class="col-md-3">
-                                    <label for="harga" class="visually-hidden">Harga</label>
-                                    <input type="number" name="harga" id="harga"
-                                        class="form-control form-control-sm" placeholder="Harga"
-                                        required value="{{ old('harga') }}">
-                                </div>
-                                <div class="col-md-3">
-                                    <label for="stok" class="visually-hidden">Stok</label>
-                                    <input type="number" name="stok" id="stok"
-                                        class="form-control form-control-sm" placeholder="Stok"
-                                        value="{{ old('stok') }}">
-                                </div>
-                                <div class="col-md-2 text-end">
-                                    <button type="submit" class="btn btn-primary btn-sm w-100">Add Barang</button>
-                                </div>
-                            </form>
-                        </div>
-                </div>  
+                    <div class="card-header py-2">
+                        <strong class="small mb-0">Add Satuan</strong>
+                    </div>
+                    <div class="card-body">
+                        <form action="{{ url('/manage_satuan') }}" method="POST"
+                            class="row g-2 align-items-end">
+                            @csrf
+                            <div class="col-md-4">
+                                <label for="namasatuan" class="visually-hidden">Nama satuan</label>
+                                <input type="text" name="namasatuan" id="namasatuan"
+                                    class="form-control form-control-sm" placeholder="Nama Barang"
+                                    required autofocus value="{{ old('namabarang') }}">
+                            </div>
+                            <div class="col-md-3">
+                                <label for="harga" class="visually-hidden">Harga</label>
+                                <input type="number" name="harga" id="harga"
+                                    class="form-control form-control-sm" placeholder="Harga"
+                                    required value="{{ old('harga') }}">
+                            </div>
+                            <div class="col-md-3">
+                                <label for="stok" class="visually-hidden">Stok</label>
+                                <input type="number" name="stok" id="stok"
+                                    class="form-control form-control-sm" placeholder="Stok"
+                                    value="{{ old('stok') }}">
+                            </div>
+                            <div class="col-md-2 text-end">
+                                <button type="submit" class="btn btn-primary btn-sm w-100">Add
+                                    Barang</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
 
                 <!-- Satuan Table -->
                 <div class="card">
@@ -81,30 +82,31 @@
                             <table class="table table-striped mb-0">
                                 <thead>
                                     <tr>
-                                        <th style="width:70px">Number</th>
-                                        <th style="width:70px">ID</th>
-                                        <th>Satuan</th>
-                                        <th>Status</th>
-                                        <th>Jenis</th>
-                                        <th>Satuan</th>
-                                        <th style="width:180px">Actions</th>
+                                        <th style="width: 100px">Number</th>
+                                        <th scope="col">ID</th>
+                                        <th scope="col">Satuan</th>
+                                        <th scope="col">Status</th>
+                                        <th scope="col">Jenis</th>
+                                        <th scope="col" style="width:180px">Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     @forelse($satuans as $satuan)
                                         <tr>
-                                            <td>{{ $loop->iteration }}</td>
-                                            <td>{{ $satuan->idsatuan}}</td>
+                                            <th scope="row" style="text-center">
+                                                {{ $loop->iteration }}</td>
+                                            <td>{{ $satuan->idsatuan }}</td>
                                             <td>{{ $satuan->nama_satuan ?? '-' }}</td>
-                                            <td>{{ $satuan->Status == 1 ?? 'aktif': 'non-aktif'}}</td>
-                                            <td>{{ $satuan->nama_barang ?? '-' }}</td>
+                                            <td>{{ $satuan->status == 1 ? 'Aktif' : 'Non-aktif' }}
+                                            </td>
+                                            <td>{{ $satuan->jenis ?? '-' }}</td>
                                             <td>
-                                                <a href="{{ url('/manage_barang/' . ($barang->idbarang ?? $barang->id) . '/edit') }}"
+                                                <a href="{{ url('/manage_satuan/' . ($satuan->idsatuan ?? $satuan->id) . '/edit') }}"
                                                     class="btn btn-sm btn-warning me-1">Edit</a>
-                                                <a href="{{ url('/manage_barang/' . ($barang->idbarang ?? $barang->id)) }}"
+                                                <a href="{{ url('/manage_satuan/' . ($satuan->idsatuan ?? $satuan->id)) }}"
                                                     class="btn btn-sm btn-info me-1">View</a>
                                                 <form
-                                                    action="{{ url('/manage_barang/' . ($barang->idbarang ?? $barang->id)) }}"
+                                                    action="{{ url('/manage_satuan/' . ($satuan->idsatuan ?? $satuan->id)) }}"
                                                     method="POST" class="d-inline"
                                                     onsubmit="return confirm('Hapus barang ini?');">
                                                     @csrf
@@ -116,7 +118,8 @@
                                         </tr>
                                     @empty
                                         <tr>
-                                            <td colspan="6" class="text-center py-4">No barang found</td>
+                                            <td colspan="7" class="text-center py-4">No barang
+                                                found</td>
                                         </tr>
                                     @endforelse
                                 </tbody>
@@ -124,6 +127,76 @@
                         </div>
                     </div>
                 </div>
+
+                {{-- Cari data satuan by ID --}}
+                <div class="card mt-4">
+                    <div class="card-header p-2">
+                        <strong class="small mb-0">Cari Data Satuan by ID</strong>
+                    </div>
+                    <div class="card-body">
+                        <form action=" {{ url('/manage_satuan') }} " method="GET" class="row g-2 align-items-end">
+                            @csrf
+                            <div class="col-md-4">
+                                <label for="id_satuan" class="form-label">ID Satuan:</label>
+                                <select name="idsatuan" id="idsatuan"
+                                    class="form-select form-select-sm">
+                                    <option value="" selected>Pilih ID Satuan</option>
+                                    @foreach ($dataSatuans as $dataSatuan)
+                                        <option value="{{ $dataSatuan->idsatuan }}">
+                                            {{ $dataSatuan->idsatuan }} - {{ $dataSatuan->nama_satuan }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="col-md-2">
+                                <button type="submit"
+                                    class="btn btn-primary btn-sm w-100">Search</button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div class="table-responsive px-3 pb-3">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Nama Satuan</th>
+                                    <th>Status</th>
+                                    <th>Jenis</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (isset($FilterSatuan))
+                                    @if (!empty($FilterSatuan))
+                                        @foreach ($filterSatuan as $satuan)
+                                            <tr>
+                                                <td>{{ $satuan->idsatuan }}</td>
+                                                <td>{{ $satuan->nama_satuan }}</td>
+                                                <td>{{ $satuan->status == 1 ? 'Aktif' : 'Non-aktif' }}
+                                                </td>
+                                                <td>{{ $satuan->jenis ?? '-' }}</td>
+                                            </tr>
+                                        @endforeach
+                                    @else
+                                        <tr>
+                                            <td colspan="4" class="text-center py-3">
+                                                Tidak ada data dengan ID tersebut.
+                                            </td>
+                                        </tr>
+                                    @endif
+                                @else
+                                    <tr>
+                                        <td colspan="4" class="text-center py-3">
+                                            Silakan masukkan ID Satuan untuk mencari data.
+                                        </td>
+                                    </tr>
+                                @endif
+                            </tbody>
+
+                        </table>
+                    </div>
+                </div>
+
             </div>
         </div>
     </main>

@@ -179,6 +179,7 @@
                                         <th style="width:70px">Number</th>
                                         <th style="width:70px">ID</th>
                                         <th>Nama Barang</th>
+                                        <th>Status</th>
                                         <th>Harga</th>
                                         <th>Jenis</th>
                                         <th>Satuan</th>
@@ -190,6 +191,7 @@
                                             <td>{{ $loop->iteration }}</td>
                                             <td>{{ $barang->idbarang }}</td>
                                             <td>{{ $barang->nama ?? '-' }}</td>
+                                            <td>{{ $barang->status == 1 ? 'aktif' : 'tidak aktif' }}</td>
                                             <td>{{ $barang->harga ?? '-' }}</td>
                                             <td>
                                                 @switch($barang->jenis)
@@ -210,7 +212,7 @@
                                                 @endswitch
                                             </td>
 
-                                            <td>{{ $barang->idsatuan->nama_satuan ?? '-' }}</td>
+                                            <td>{{ $barang->nama_satuan ?? '-' }}</td>
                                         </tr>
                                     @empty
                                         <tr>

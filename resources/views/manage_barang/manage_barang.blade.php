@@ -34,45 +34,46 @@
                     <div class="d-flex justify-content-between align-items-center mb-2">
                         <div>
                             <h2 class="mb-0">Barang Management</h2>
-                            <p class="text-muted small mb-0">Here you can manage items (barang) of the system.</p>
+                            <p class="text-muted small mb-0">Here you can manage items (barang) of
+                                the system.</p>
                         </div>
                     </div>
                 </div>
 
                 <!-- Inline Add User Form (polished) -->
                 <div class="card mb-3">
-                        <div class="card-header py-2">
-                            <strong class="small mb-0">Add Barang</strong>
-                        </div>
-                        <div class="card-body">
-                            <form action="{{ url('/manage_barang') }}" method="POST"
-                                class="row g-2 align-items-end">
-                                @csrf
-                                <div class="col-md-4">
-                                    <label for="namabarang" class="visually-hidden">Nama Barang</label>
-                                    <input type="text" name="namabarang" id="namabarang"
-                                        class="form-control form-control-sm"
-                                        placeholder="Nama Barang" required autofocus
-                                        value="{{ old('namabarang') }}">
-                                </div>
-                                <div class="col-md-3">
-                                    <label for="harga" class="visually-hidden">Harga</label>
-                                    <input type="number" name="harga" id="harga"
-                                        class="form-control form-control-sm" placeholder="Harga"
-                                        required value="{{ old('harga') }}">
-                                </div>
-                                <div class="col-md-3">
-                                    <label for="stok" class="visually-hidden">Stok</label>
-                                    <input type="number" name="stok" id="stok"
-                                        class="form-control form-control-sm" placeholder="Stok"
-                                        value="{{ old('stok') }}">
-                                </div>
-                                <div class="col-md-2 text-end">
-                                    <button type="submit" class="btn btn-primary btn-sm w-100">Add Barang</button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>  
+                    <div class="card-header py-2">
+                        <strong class="small mb-0">Add Barang</strong>
+                    </div>
+                    <div class="card-body">
+                        <form action="{{ url('/manage_barang') }}" method="POST"
+                            class="row g-2 align-items-end">
+                            @csrf
+                            <div class="col-md-4">
+                                <label for="namabarang" class="visually-hidden">Nama Barang</label>
+                                <input type="text" name="namabarang" id="namabarang"
+                                    class="form-control form-control-sm" placeholder="Nama Barang"
+                                    required autofocus value="{{ old('namabarang') }}">
+                            </div>
+                            <div class="col-md-3">
+                                <label for="harga" class="visually-hidden">Harga</label>
+                                <input type="number" name="harga" id="harga"
+                                    class="form-control form-control-sm" placeholder="Harga"
+                                    required value="{{ old('harga') }}">
+                            </div>
+                            <div class="col-md-3">
+                                <label for="stok" class="visually-hidden">Stok</label>
+                                <input type="number" name="stok" id="stok"
+                                    class="form-control form-control-sm" placeholder="Stok"
+                                    value="{{ old('stok') }}">
+                            </div>
+                            <div class="col-md-2 text-end">
+                                <button type="submit" class="btn btn-primary btn-sm w-100">Add
+                                    Barang</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
 
                 <!-- Barang Table -->
                 <div class="card">
@@ -94,20 +95,23 @@
                                     @forelse($barangs as $barang)
                                         <tr>
                                             <td>{{ $loop->iteration }}</td>
-                                            <td>{{ $barang->idbarang}}</td>
+                                            <td>{{ $barang->idbarang }}</td>
                                             <td>{{ $barang->nama ?? '-' }}</td>
                                             <td>{{ $barang->harga ?? '-' }}</td>
                                             <td>
                                                 @switch($barang->jenis)
                                                     @case('M')
                                                         Makanan
-                                                        @break
+                                                    @break
+
                                                     @case('K')
                                                         Kebutuhan
-                                                        @break
+                                                    @break
+
                                                     @case('J')
                                                         Jasa
-                                                        @break
+                                                    @break
+
                                                     @default
                                                         {{ $barang->jenis ?? '-' }}
                                                 @endswitch
@@ -130,17 +134,53 @@
                                                 </form>
                                             </td>
                                         </tr>
-                                    @empty
-                                        <tr>
-                                            <td colspan="6" class="text-center py-4">No barang found</td>
-                                        </tr>
-                                    @endforelse
-                                </tbody>
-                            </table>
+                                        @empty
+                                            <tr>
+                                                <td colspan="6" class="text-center py-4">No barang
+                                                    found
+                                                </td>
+                                            </tr>
+                                        @endforelse
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
+
+                    <div class="card mx-3">
+                    </div>
+
                 </div>
+
+                <div class="card m-3">
+                    <div class="card-header py-2">
+                        <strong class="small mb-0">Search Data Barang</strong>
+                    </div>
+                    <div class="card-body">
+                        <form action=" {{ url('/manage_barang') }} " method="GET"
+                            class="row g-2 align-items-end">
+                            @csrf
+                            <div class="col-md-4">
+                                <label for="nama_barang" class="form-label">ID
+                                    Barang:</label>
+                                <input type="text" name="id_barang" id="id_barang
+                        <div class="table-responsive">
+                            <table class="table table-striped mb-0">
+                                <thead>
+                                    <tr>
+                                        <th style="width:70px">Number</th>
+                                        <th style="width:70px">ID</th>
+                                        <th>Nama Barang</th>
+                                        <th>Harga</th>
+                                        <th>Jenis</th>
+                                        <th>Satuan</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    
+                        
+                </div>
+
             </div>
-        </div>
-    </main>
-</body>
+        </main>
+    </body>

@@ -131,7 +131,7 @@
                 {{-- Cari data satuan by ID --}}
                 <div class="card mt-4">
                     <div class="card-header p-2">
-                        <strong class="small mb-0">Cari Data Satuan by ID</strong>
+                        <strong class="small mb-0">Cari Data Barang by IdSatuan</strong>
                     </div>
                     <div class="card-body">
                         <form action=" {{ url('/manage_satuan') }} " method="GET" class="row g-2 align-items-end">

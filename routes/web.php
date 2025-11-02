@@ -28,3 +28,8 @@ Route::get('/manage_vendor', [App\Http\Controllers\VendorController::class, 'ind
 Route::get('/manage_penjualan', [App\Http\Controllers\PenjualanController::class, 'index']);
 // Detail Penjualan
 Route::get('/detail_penjualan', [App\Http\Controllers\DetailPenjualanController::class, 'index']);
+
+// Manage Penerimaan
+Route::get('/manage_penerimaan', [App\Http\Controllers\PenerimaanController::class, 'index']);
+// Detail Penerimaan
+// Route::get('/detail_penerimaan', [App\Http\Controllers\DetailPenerimaanController::class, 'index']);

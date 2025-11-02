@@ -30,6 +30,7 @@
         <div class="flex-grow-1" style="overflow-y: auto;">
 
             <div class="container-fluid p-3">
+                {{-- head --}}
                 <div class="mb-3">
                     <div class="d-flex justify-content-between align-items-center mb-2">
                         <div>
@@ -201,7 +202,7 @@
                                         </tr>
                                         @empty
                                             <tr>
-                                                <td colspan="6" class="text-center py-4">No barang
+                                                <td colspan="8" class="text-center py-4">No barang
                                                     found
                                                 </td>
                                             </tr>
@@ -281,7 +282,7 @@
                                         </tr>
                                         @empty
                                             <tr>
-                                                <td colspan="6" class="text-center py-4">No barang
+                                                <td colspan="8" class="text-center py-4">No barang
                                                     found
                                                 </td>
                                             </tr>

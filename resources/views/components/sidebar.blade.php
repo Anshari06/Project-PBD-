@@ -42,12 +42,11 @@
             <x-nav-link href="/manage_vendor" :active="request()->is('manage_vendor')" icn="bi bi-building me-2">
                 Manage Vendor</x-nav-link>
         </li>
-        <li>
-            <a href="#" class="nav-link text-white">
-                <i class="bi bi-people me-2"></i>
-                Customers
-            </a>
+        <li class="nav-item">
+            <x-nav-link href="/manage_penjualan" :active="request()->is('manage_penjualan')" icn="bi bi-cash me-2">
+                Manage Penjualan</x-nav-link>
         </li>
+        
     </ul>
     <hr>
     <div class="dropdown">

@@ -108,6 +108,11 @@
                     </div>
                 </div>
 
+                {{-- detail penjualan --}}
+                <div>
+                    <a href="{{ url('/detail_penjualan') }}" class="btn btn-info text-light btn-sm mb-3">Go to Detail Penjualan</a>
+                </div>
+
                 <!-- Penjualan Table -->
                 <div class="card">
                     <div class="card-body p-0">

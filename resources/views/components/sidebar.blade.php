@@ -61,9 +61,13 @@
                 Manage Penjualan</x-nav-link>
         </li>
         <li class="nav-item">
-            <x-nav-link href="/detail_penerimaan" :active="request()->is('detail_penerimaan')" icn="bi bi-cash me-2">
+            <x-nav-link href="/detail_penerimaan" :active="request()->is('detail_penerimaan')" icn="bi bi-clipboard-check me-2">
                 Detail Penerimaan</x-nav-link>
         </li>
+        {{-- <li class="nav-item">
+            <x-nav-link href="/detail_penerimaan" :active="request()->is('detail_penerimaan')" icn="bi bi-clipboard-check me-2">
+                Detail Penjualan</x-nav-link>
+        </li> --}}
 
     </ul>
     <hr>

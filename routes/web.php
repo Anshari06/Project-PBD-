@@ -26,3 +26,5 @@ Route::get('/manage_vendor', [App\Http\Controllers\VendorController::class, 'ind
 
 // Manage Penjualan
 Route::get('/manage_penjualan', [App\Http\Controllers\PenjualanController::class, 'index']);
+// Detail Penjualan
+Route::get('/detail_penjualan', [App\Http\Controllers\DetailPenjualanController::class, 'index']);

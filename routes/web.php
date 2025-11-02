@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ManageUserController;
 
+
 // dashboard route handled by controller
 Route::get('/', [DashboardController::class, 'index']);
 

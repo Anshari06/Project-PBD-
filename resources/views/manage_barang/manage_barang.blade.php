@@ -142,10 +142,11 @@
                                     <tr>
                                         <th style="width:70px">Number</th>
                                         <th style="width:70px">ID</th>
-                                        <th>Nama Barang</th>
+                                        <th style="width:150px">Nama Barang</th>
                                         <th>Harga</th>
-                                        <th>Jenis</th>
+                                        <th style="width: 100px align-item center">Jenis</th>
                                         <th>Satuan</th>
+                                        <th>Status</th>
                                         <th style="width:180px">Actions</th>
                                     </tr>
                                 </thead>
@@ -176,6 +177,12 @@
                                             </td>
 
                                             <td>{{ $barang->nama_satuan ?? '-' }}</td>
+                                            <td>
+                                                <span
+                                                    class="btn btn-sm {{ $barang->status == 1 ? 'btn-success' : 'btn-danger' }}">
+                                                    {{ $barang->status == 1 ? 'Aktif' : 'Non-aktif' }}
+                                                </span>
+                                            </td>
                                             <td>
                                                 <a href="{{ url('/manage_barang/' . ($barang->idbarang ?? $barang->id) . '/edit') }}"
                                                     class="btn btn-sm btn-warning me-1">Edit</a>

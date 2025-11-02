@@ -75,6 +75,64 @@
                     </div>
                 </div>
 
+                <!-- Card: Count by Jenis (styled) -->
+                <div class="card mb-4 shadow-sm">
+                    <div class="card-body">
+                        <div class="row align-items-center">
+                            <div class="col-md-6">
+                                <form action="{{ url('/manage_barang') }}" method="GET"
+                                    class="row g-2 align-items-end">
+                                    <div class="col-8">
+                                        <label for="jenis_barang"
+                                            class="form-label visually-hidden">Jenis</label>
+                                        <select id="jenis_barang" name="jenis_barang"
+                                            class="form-select form-select-sm">
+                                            <option value="">-- Pilih Jenis --</option>
+                                            <option value="M"
+                                                {{ request('jenis_barang') == 'M' ? 'selected' : '' }}>
+                                                M (Makanan)</option>
+                                            <option value="K"
+                                                {{ request('jenis_barang') == 'K' ? 'selected' : '' }}>
+                                                K (Kebutuhan)</option>
+                                            <option value="J"
+                                                {{ request('jenis_barang') == 'J' ? 'selected' : '' }}>
+                                                J (Jasa)</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-4 d-grid">
+                                        <button type="submit"
+                                            class="btn btn-primary btn-sm">Hitung</button>
+                                    </div>
+                                </form>
+                                <p class="mt-2 text-muted small mb-0">Pilih jenis barang di atas
+                                    lalu tekan <strong>Hitung</strong> untuk melihat jumlah item
+                                    sesuai jenis.</p>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="d-flex align-items-center justify-content-end">
+                                    <div class="me-3 text-end">
+                                        <div class="text-muted small">Hasil</div>
+                                        <div class="d-flex align-items-center">
+                                            <div class="d-inline-flex align-items-center justify-content-center rounded-circle"
+                                                style="width:80px;height:80px;background:linear-gradient(135deg,#4f46e5,#06b6d4);box-shadow:0 8px 24px rgba(79,70,229,0.18);">
+                                                <i class="bi bi-box-seam text-white" style="font-size:34px;"></i>
+                                            </div>
+                                            <div class="ms-3">
+                                                <div class="fs-3 fw-bold">
+                                                    {{ isset($HitungBarang) ? number_format($HitungBarang) : '—' }}
+                                                </div>
+                                                <div class="text-muted small">total barang sesuai
+                                                    jenis</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Barang Table -->
                 <div class="card">
                     <div class="card-body p-0">
@@ -191,7 +249,8 @@
                                             <td>{{ $loop->iteration }}</td>
                                             <td>{{ $barang->idbarang }}</td>
                                             <td>{{ $barang->nama ?? '-' }}</td>
-                                            <td>{{ $barang->status == 1 ? 'aktif' : 'tidak aktif' }}</td>
+                                            <td>{{ $barang->status == 1 ? 'aktif' : 'tidak aktif' }}
+                                            </td>
                                             <td>{{ $barang->harga ?? '-' }}</td>
                                             <td>
                                                 @switch($barang->jenis)
@@ -211,21 +270,22 @@
                                                         {{ $barang->jenis ?? '-' }}
                                                 @endswitch
                                             </td>
-
                                             <td>{{ $barang->nama_satuan ?? '-' }}</td>
                                         </tr>
-                                    @empty
-                                        <tr>
-                                            <td colspan="6" class="text-center py-4">No barang
-                                                found
-                                            </td>
-                                        </tr>
-                                    @endforelse
-                                </tbody>
-                            </table>
+                                        @empty
+                                            <tr>
+                                                <td colspan="6" class="text-center py-4">No barang
+                                                    found
+                                                </td>
+                                            </tr>
+                                        @endforelse
+                                    </tbody>
+                                </table>
 
+                            </div>
                         </div>
                     </div>
                 </div>
-        </main>
-    </body>
+
+            </main>
+        </body>

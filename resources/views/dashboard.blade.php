@@ -36,36 +36,48 @@
                 <div class="container-fluid mt-3">
                     <div class="row g-3">
                         <div class="col-6 col-md-3">
-                            <div class="card shadow-sm">
-                                <div class="card-body d-flex align-items-center">
-                                    <i class="bi bi-people fs-1 text-primary me-3"></i>
-                                    <div>
-                                        <div class="text-muted small">Total Users</div>
-                                        <div class="fs-3 fw-bold">{{ $usersCount ?? '—' }}</div>
+                            <div class="card shadow-sm border-0">
+                                <div class="d-flex">
+                                    <!-- left accent bar using Bootstrap bg utility -->
+                                    <div class="bg-primary"
+                                        style="width:6px;border-top-left-radius:.375rem;border-bottom-left-radius:.375rem;">
+                                    </div>
+                                    <div class="card-body d-flex align-items-center flex-grow-1">
+                                        <i class="bi bi-people fs-1 text-primary me-3"></i>
+                                        <div>
+                                            <div class="text-muted small">Total Users</div>
+                                            <div class="fs-3 fw-bold">{{ $usersCount ?? '—' }}</div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
                         <div class="col-6 col-md-3">
-                            <div class="card shadow-sm">
-                                <div class="card-body d-flex align-items-center">
-                                    <i class="bi bi-box fs-1 text-success me-3"></i>
-                                    <div>
-                                        <div class="text-muted small">Barang Ready</div>
-                                        <div class="fs-3 fw-bold">{{ $barangCount ?? '—' }}</div>
+                            <div class="card shadow-sm border-0">
+                                <div class="d-flex">
+                                    <div class="bg-success" style="width:6px;border-top-left-radius:.375rem;border-bottom-left-radius:.375rem;"></div>
+                                    <div class="card-body d-flex align-items-center flex-grow-1">
+                                        <i class="bi bi-box fs-1 text-success me-3"></i>
+                                        <div>
+                                            <div class="text-muted small">Barang Ready</div>
+                                            <div class="fs-3 fw-bold">{{ $barangCount ?? '—' }}</div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
                         <div class="col-6 col-md-3">
-                            <div class="card shadow-sm">
-                                <div class="card-body d-flex align-items-center">
-                                    <i class="bi bi-building-fill fs-1 text-warning me-3"></i>
-                                    <div>
-                                        <div class="text-muted small">Vendor Aktif</div>
-                                        <div class="fs-3 fw-bold">{{ $vendorCount ?? '—' }}</div>
+                            <div class="card shadow-sm border-0">
+                                <div class="d-flex">
+                                    <div class="bg-warning" style="width:6px;border-top-left-radius:.375rem;border-bottom-left-radius:.375rem;"></div>
+                                    <div class="card-body d-flex align-items-center flex-grow-1">
+                                        <i class="bi bi-building-fill fs-1 text-warning me-3"></i>
+                                        <div>
+                                            <div class="text-muted small">Vendor Aktif</div>
+                                            <div class="fs-3 fw-bold">{{ $vendorCount ?? '—' }}</div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -119,7 +131,7 @@
                     </div>
                 </div>
             </div>
-            
+
         </div>
 
     </main>

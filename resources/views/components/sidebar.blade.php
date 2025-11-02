@@ -14,8 +14,7 @@
     <div class="container-fluid">
         <a class="navbar-brand gap-3 text-white fs-5 fw-bold" href="#">
             <!-- inline SVG logo (avoids incorrect asset usage) -->
-            <svg width="40"  viewBox="0 0 46 40" fill="none"
-                xmlns="http://www.w3.org/2000/svg">
+            <svg width="40" viewBox="0 0 46 40" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path
                     d="M0 33L4.60606 25H12.2448C17.2569 25 21.4947 28.7103 22.1571 33.6784L23 40H13L11.5585 36.6365C10.613 34.4304 8.44379 33 6.04362 33H0Z"
                     fill="#0047C1"></path>
@@ -55,21 +54,28 @@
                 Manage Vendor</x-nav-link>
         </li>
         <hr>
-        <p class="text-white-50 text-uppercase small px-3 mb-2">Penjualan</p>
+        <p class="text-white-50 text-uppercase small px-3 mb-2">Transaksi</p>
         <li class="nav-item">
-            <x-nav-link href="/manage_penjualan" :active="request()->is('manage_penjualan')" icn="bi bi-cash me-2">
+            <x-nav-link href="/manage_penjualan" :active="request()->is('manage_penjualan') || request()->is('detail_penjualan*')" icn="bi bi-cash me-2">
                 Manage Penjualan</x-nav-link>
         </li>
-        <hr>
-        <p class="text-white-50 text-uppercase small px-3 mb-2">Penerimaan</p>
         <li class="nav-item">
-            <x-nav-link href="/manage_penerimaan" :active="request()->is('manage_penerimaan')" icn="bi bi-clipboard-check me-2">
+            <!-- highlight this nav item for both manage_penerimaan and detail_penerimaan routes -->
+            <x-nav-link href="/manage_penerimaan" :active="request()->is('manage_penerimaan*') || request()->is('detail_penerimaan*')"
+                icn="bi bi-clipboard-check me-2">
                 Manage Penerimaan</x-nav-link>
         </li>
-        {{-- <li class="nav-item">
-            <x-nav-link href="/detail_penerimaan" :active="request()->is('detail_penerimaan')" icn="bi bi-clipboard-check me-2">
-                Detail Penjualan</x-nav-link>
-        </li> --}}
+
+        <li class="nav-item">
+            <x-nav-link href="/manage_pengadaan" :active="request()->is('manage_pengadaan*') || request()->is('detail_pengadaan*')"
+                icn="bi bi-cart-check me-2">
+                Manage Pengadaan</x-nav-link>
+        </li>
+        <li class="nav-item">
+            <x-nav-link href="/manage_pembayaran" :active="request()->is('manage_pembayaran*') || request()->is('detail_pembayaran*')"
+                icn="bi bi-card-checklist me-2">
+                Manage Kartu Stok</x-nav-link>
+        </li>
 
     </ul>
     <hr>

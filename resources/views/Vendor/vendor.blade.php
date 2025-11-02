@@ -64,6 +64,42 @@
                     </div>
                 </div>
 
+                <div class="card my-5">
+                    <div class="card-header py-2">
+                        <strong class="small mb-0">Cek Status Vendor</strong>
+                    </div>
+                    <div class="card-body">
+                        <form action="{{ url('/manage_vendor') }}" method="GET"
+                            class="row g-2 align-items-end">
+                            <div class="col-md-4">
+                                <label for="vendor_id" class="form-label">Pilih Vendor</label>
+                                <select name="vendor_id" id="vendor_id" class="form-select form-select-sm">
+                                    <option value="">-- Pilih Vendor --</option>
+                                    @foreach($allVendors ?? collect() as $v)
+                                        <option value="{{ $v->idvendor }}" {{ request('vendor_id') == $v->idvendor ? 'selected' : '' }}>{{ $v->idvendor }} - {{ $v->nama_vendor }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+
+                            <div class="col-md-2 d-grid">
+                                <button type="submit" class="btn btn-primary btn-sm">Cek</button>
+                            </div>
+                            <div class="row-md-6">
+                                @if (isset($vendorStatus))
+                                    <div class="alert alert-info mb-0" role="alert">
+                                        Status vendor (ID: {{ request('vendor_id') }}):
+                                        <strong>{{ $vendorStatus }}</strong>
+                                    </div>
+                                @else
+                                    <div class="text-muted small">Masukkan ID vendor dan tekan
+                                        <strong>Cek</strong> untuk melihat status.</div>
+                                @endif
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                {{-- tabel data vendor --}}
                 <div class="card">
                     <div class="card-body p-0">
                         <div class="table-responsive">
@@ -84,8 +120,10 @@
                                             <td>{{ $loop->iteration }}</td>
                                             <td>{{ $vendor->idvendor ?? '-' }}</td>
                                             <td>{{ $vendor->nama_vendor ?? '-' }}</td>
-                                            <td>{{ $vendor->badan_hukum == 1 ? 'aktif' : 'non-aktif' }}</td>
-                                            <td>{{ $vendor->status == 1 ? 'aktif' : 'nonaktif' }}</td>
+                                            <td>{{ $vendor->badan_hukum == 1 ? 'aktif' : 'non-aktif' }}
+                                            </td>
+                                            <td>{{ $vendor->status == 1 ? 'aktif' : 'nonaktif' }}
+                                            </td>
                                             <td>
                                                 <a href="{{ url('/vendor/' . ($vendor->idvendor ?? $vendor->id) . '/edit') }}"
                                                     class="btn btn-sm btn-warning me-1">Edit</a>

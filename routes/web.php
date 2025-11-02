@@ -32,4 +32,4 @@ Route::get('/detail_penjualan', [App\Http\Controllers\DetailPenjualanController:
 // Manage Penerimaan
 Route::get('/manage_penerimaan', [App\Http\Controllers\PenerimaanController::class, 'index']);
 // Detail Penerimaan
-// Route::get('/detail_penerimaan', [App\Http\Controllers\DetailPenerimaanController::class, 'index']);
+Route::get('/detail_penerimaan', [App\Http\Controllers\DetailPenerimaanController::class, 'index']);

@@ -39,7 +39,8 @@
                 Manage Satuan</x-nav-link>
         </li>
         <li class="nav-item">
-            <x-nav-link href="/orders" :active="request()->is('orders')" icn="bi bi-table me-2">Orders</x-nav-link>
+            <x-nav-link href="/manage_vendor" :active="request()->is('manage_vendor')" icn="bi bi-building me-2">
+                Manage Vendor</x-nav-link>
         </li>
         <li>
             <a href="#" class="nav-link text-white">

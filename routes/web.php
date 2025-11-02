@@ -19,4 +19,6 @@ Route::get('/manage_barang', [App\Http\Controllers\BarangController::class, 'ind
 
 // Manage Satuan route
 Route::get('/manage_satuan', [App\Http\Controllers\SatuanController::class, 'index']);
-// Route::post('/manage_satuan', [App\Http\Controllers\SatuanController::class, 'store']);
+
+// Manage Vendor
+Route::get('/manage_vendor', [App\Http\Controllers\VendorController::class, 'index']);

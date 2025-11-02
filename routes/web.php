@@ -23,3 +23,6 @@ Route::get('/manage_satuan', [App\Http\Controllers\SatuanController::class, 'ind
 
 // Manage Vendor
 Route::get('/manage_vendor', [App\Http\Controllers\VendorController::class, 'index']);
+
+// Manage Penjualan
+Route::get('/manage_penjualan', [App\Http\Controllers\PenjualanController::class, 'index']);

@@ -86,7 +86,6 @@
                                         <th scope="col">ID</th>
                                         <th scope="col">Satuan</th>
                                         <th scope="col">Status</th>
-                                        <th scope="col">Jenis</th>
                                         <th scope="col" style="width:180px">Actions</th>
                                     </tr>
                                 </thead>
@@ -97,9 +96,12 @@
                                                 {{ $loop->iteration }}</td>
                                             <td>{{ $satuan->idsatuan }}</td>
                                             <td>{{ $satuan->nama_satuan ?? '-' }}</td>
-                                            <td>{{ $satuan->status == 1 ? 'Aktif' : 'Non-aktif' }}
+                                            <td>
+                                                <span
+                                                    class="btn btn-sm {{ $satuan->status == 1 ? 'btn-success' : 'btn-danger' }}">
+                                                    {{ $satuan->status == 1 ? 'Aktif' : 'Non-aktif' }}
+                                                </span>
                                             </td>
-                                            <td>{{ $satuan->jenis ?? '-' }}</td>
                                             <td>
                                                 <a href="{{ url('/manage_satuan/' . ($satuan->idsatuan ?? $satuan->id) . '/edit') }}"
                                                     class="btn btn-sm btn-warning me-1">Edit</a>
@@ -134,7 +136,8 @@
                         <strong class="small mb-0">Cari Data Barang by IdSatuan</strong>
                     </div>
                     <div class="card-body">
-                        <form action=" {{ url('/manage_satuan') }} " method="GET" class="row g-2 align-items-end">
+                        <form action=" {{ url('/manage_satuan') }} " method="GET"
+                            class="row g-2 align-items-end">
                             @csrf
                             <div class="col-md-4">
                                 <label for="id_satuan" class="form-label">ID Satuan:</label>
@@ -143,7 +146,8 @@
                                     <option value="" selected>Pilih ID Satuan</option>
                                     @foreach ($dataSatuans as $dataSatuan)
                                         <option value="{{ $dataSatuan->idsatuan }}">
-                                            {{ $dataSatuan->idsatuan }} - {{ $dataSatuan->nama_satuan }}
+                                            {{ $dataSatuan->idsatuan }} -
+                                            {{ $dataSatuan->nama_satuan }}
                                         </option>
                                     @endforeach
                                 </select>

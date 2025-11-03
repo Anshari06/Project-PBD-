@@ -33,3 +33,5 @@ Route::get('/detail_penjualan', [App\Http\Controllers\DetailPenjualanController:
 Route::get('/manage_penerimaan', [App\Http\Controllers\PenerimaanController::class, 'index']);
 // Detail Penerimaan
 Route::get('/detail_penerimaan', [App\Http\Controllers\DetailPenerimaanController::class, 'index']);
+// Manage Pengadaan
+Route::get('/manage_pengadaan', [App\Http\Controllers\PengadaanController::class, 'index'])->name('pengadaan.manage_pengadaan');              

@@ -24,13 +24,7 @@ class DashboardController extends Controller
         $vendorCount = DB::table('vendor_aktif')->count() ?? 0;
 
         // Fetch latest 10 penjualan safely (only if table exists)
-        $penjualanterbaru = Schema::hasTable('penjualan')
-            ? DB::table('penjualan')
-            ->select('idpenjualan', 'created_at', 'subtotal_nilai', 'total_nilai', 'idmargin_penjualan')
-            ->orderBy('created_at', 'desc')
-            ->limit(10)
-            ->get()
-            : collect();
+        $penjualanterbaru = DB::table('penjualan_barang') ->get();
 
         return view('dashboard', compact('usersCount', 'barangCount', 'vendorCount', 'penjualanterbaru'));
     }

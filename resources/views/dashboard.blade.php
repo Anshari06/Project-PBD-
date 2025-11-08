@@ -99,8 +99,10 @@
                                         <th style="width:60px">#</th>
                                         <th>ID Penjualan</th>
                                         <th>Tanggal</th>
-                                        <th class="text-end">Subtotal</th>
-                                        <th class="text-end">Total</th>
+                                        <th>barang</th>
+                                        <th>jumlah</th>
+                                        <th class="">Subtotal</th>
+                                        <th class="">Total</th>
                                         <th>ID Margin</th>
                                     </tr>
                                 </thead>
@@ -111,10 +113,12 @@
                                             <td>{{ $p->idpenjualan ?? '-' }}</td>
                                             <td>{{ isset($p->created_at) ? \Carbon\Carbon::parse($p->created_at)->format('d M Y H:i') : '-' }}
                                             </td>
-                                            <td class="text-end">
+                                            <td>{{ $p->nama_barang ?? '-' }}</td>
+                                            <td>{{ $p->jumlah ?? '-' }}</td>
+                                            <td >
                                                 {{ isset($p->subtotal_nilai) ? number_format($p->subtotal_nilai, 0, ',', '.') : '-' }}
                                             </td>
-                                            <td class="text-end">
+                                            <td >
                                                 {{ isset($p->total) ? number_format($p->total, 0, ',', '.') : '-' }}
                                             </td>
                                             <td>{{ $p->idmargin_penjualan ?? '-' }}</td>

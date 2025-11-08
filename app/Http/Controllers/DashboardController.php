@@ -16,24 +16,22 @@ class DashboardController extends Controller
     public function index()
     {
         // Use Schema::hasTable to avoid errors when a table doesn't exist
-    $usersCount = Schema::hasTable('user') ? User::count() : 0;
+        $usersCount = User::count() ?? 0;
 
-    // Count only active barang (status = 1) if table exists
-    $barangCount = Schema::hasTable('barang') ? DB::table('barang')->where('status', 1)->count() : 0;
+        // Count only active barang (status = 1) if table exists
+        $barangCount = DB::table('barang_aktif')->count() ?? 0;
 
-    $vendorCount = Schema::hasTable('vendor') ? DB::table('vendor')->where('status', 1)->count() : 0;
+        $vendorCount = DB::table('vendor_aktif')->count() ?? 0;
 
-    // Fetch latest 10 penjualan safely (only if table exists)
-    $penjualanterbaru = Schema::hasTable('penjualan')
-        ? DB::table('penjualan')
+        // Fetch latest 10 penjualan safely (only if table exists)
+        $penjualanterbaru = Schema::hasTable('penjualan')
+            ? DB::table('penjualan')
             ->select('idpenjualan', 'created_at', 'subtotal_nilai', 'total_nilai', 'idmargin_penjualan')
             ->orderBy('created_at', 'desc')
             ->limit(10)
             ->get()
-        : collect();
+            : collect();
 
-    return view('dashboard', compact('usersCount', 'barangCount', 'vendorCount', 'penjualanterbaru'));
+        return view('dashboard', compact('usersCount', 'barangCount', 'vendorCount', 'penjualanterbaru'));
     }
-
-
 }

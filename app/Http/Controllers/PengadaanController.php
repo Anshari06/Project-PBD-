@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Barang;
 use App\Models\Pengadaan;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
@@ -31,9 +32,12 @@ class PengadaanController extends Controller
             $request->input('iduser'),
             $request->input('status'),
             $request->input('total_nilai'),
-            $request->input('total_nilai'),
+            $request->input('total_nilai'), // tot
             11 // persen PPN
         ]);
+
+        $idpengadaan = DB::getPdo()->lastInsertId();
+
         DB::insert("
             INSERT INTO detail_pengadaan (idbarang, harga_satuan, jumlah, sub_total, idpengadaan)
                 VALUES (?, (SELECT harga from barang where idbarang=?) , ?, hitung_subtotal(?, (SELECT harga from barang where idbarang=?)), ?)",
@@ -42,7 +46,8 @@ class PengadaanController extends Controller
                 $request->input('idbarang'),
                 $request->input('jumlah'),
                 $request->input('jumlah'),
-                DB::getPdo()->lastInsertId()
+                $request->input('idbarang'),
+                $idpengadaan,
             ]
             );
 
@@ -52,8 +57,8 @@ class PengadaanController extends Controller
 
     public function show($id)
     {
-        $pengadaan = Pengadaan::findOrFail($id);
-        $detailPengadaans = DB::select('SELECT * FROM Detail_Pengadaan_VU WHERE idpengadaan = ?', [$id]);
+        $pengadaan = collect(DB::select('SELECT * FROM Detail_Pengadaan_VU WHERE idpengadaan = ?', [$id]))->first();
+        $detailPengadaans = DB::select('SELECT * FROM detpengadaan_barang WHERE idpengadaan = ?', [$id]);
 
         return view('Pengadaan.detail_pengadaan', compact('pengadaan', 'detailPengadaans'));
     }

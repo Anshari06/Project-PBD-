@@ -67,7 +67,7 @@
 
                             <div class="col-md-2">
                                 <label for="barang" class="form-label">Barang</label>
-                                <select name="barang" id="barang"
+                                <select name="idbarang" id="idbarang"
                                     class="form-select form-select-sm">
                                     <option value="">-- Pilih Barang --</option>
                                     @foreach ($barangs as $b)
@@ -84,10 +84,10 @@
                                     value="{{ old('jumlah') }}">
                             </div>
                             <div class="col-md-2">
-                                <label for="total_nilai" class="form-label">Total</label>
+                                <label for="total_nilai" class="form-label">Total Nilai</label>
                                 <input inputmode="numeric" name="total_nilai" id="total_nilai"
-                                class="form-control form-control-sm text-end"
-                                value="{{ old('total_nilai') }}">
+                                    class="form-control form-control-sm text-end"
+                                    value="{{ old('total_nilai') }}">
                             </div>
                             <div class="col-md-2">
                                 <label for="status" class="form-label">Status</label>
@@ -121,9 +121,11 @@
                             </div>
                             <div class="row">
                                 @if (session('success'))
-                                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                    <div class="alert alert-success alert-dismissible fade show"
+                                        role="alert">
                                         {{ session('success') }}
-                                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                        <button type="button" class="btn-close"
+                                            data-bs-dismiss="alert" aria-label="Close"></button>
                                     </div>
                                 @endif
                             </div>
@@ -167,44 +169,47 @@
                 <div class="card">
                     <div class="card-body p-0">
                         <div class="table-responsive">
-                            <table class="table table-striped table-hover mb-0 gap-1">
+                            <table class="table table-striped table-hover mb-0">
                                 <thead>
-                                    <tr class="gap-2">
-                                        <th scope="col" style="width:70px">No</th>
-                                        <th style="">ID</th>
-                                        <th scope="col" class="text-center">Tanggal</th>
-                                        <th scope="col" style="width:150px">Supplier</th>
-                                        <th scope="col" class="text-end">PPN</th>
-                                        {{-- <th scope="col" class="text-end">jumlah</th> --}}
-                                        <th scope="col" class="text-end">Subtotal</th>
-                                        <th scope="col">Status</th>
-                                        <th scope="col">User</th>
-                                        <th scope="col-3">Actions</th>
+                                    <tr>
+                                        <th style="width:50px">No</th>
+                                        <th>ID</th>
+                                        <th class="text-center">Tanggal</th>
+                                        <th>Supplier</th>
+                                        <th class="text-end">Subtotal</th>
+                                        <th class="text-end">PPN</th>
+                                        <th class="text-end">Total</th>
+                                        <th>Status</th>
+                                        <th>User</th>
+                                        <th>Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     @forelse($pengadaans ?? [] as $pengadaan)
                                         <tr>
                                             <td>{{ $loop->iteration }}</td>
-                                            <td>{{ $pengadaan->idpengadaan ?? '-' }}
+                                            <td>{{ $pengadaan->idpengadaan ?? ($pengadaan->id ?? '-') }}
                                             </td>
-                                            <td>{{ isset($pengadaan->tanggal) ? \Carbon\Carbon::parse($pengadaan->tanggal)->format('d M Y') : $pengadaan->created_at ?? '-' }}
+                                            <td class="text-center">
+                                                {{ isset($pengadaan->tanggal) ? \Carbon\Carbon::parse($pengadaan->tanggal)->format('d M Y') : $pengadaan->created_at ?? '-' }}
                                             </td>
-                                            <td>{{ optional($pengadaan->vendor)->nama_vendor ?? $pengadaan->nama_vendor ?? '-' }}</td>
-                                            <td class="text-end">
-                                                {{ $pengadaan->ppn ?? '-' }} %
-                                            </td>
-                                            <td class="text-end">
-                                                {{ isset($pengadaan->jumlah) ? number_format($pengadaan->jumlah, 0, ',', '.') : '-' }}
+                                            <td>{{ optional($pengadaan->vendor)->nama_vendor ?? ($pengadaan->nama_vendor ?? '-') }}
                                             </td>
                                             <td class="text-end">
                                                 {{ isset($pengadaan->subtotal_nilai) ? number_format($pengadaan->subtotal_nilai, 0, ',', '.') : '-' }}
                                             </td>
-                                            {{-- <td>
+                                            <td class="text-end">
+                                                {{ isset($pengadaan->ppn) ? number_format($pengadaan->ppn, 0, ',', '.') . ' %' : config('app.ppn_percent', 11) . ' %' }}
+                                            </td>
+                                            <td class="text-end">
+                                                {{ isset($pengadaan->total_nilai) ? number_format($pengadaan->total_nilai, 0, ',', '.') : '-' }}
+                                            </td>
+                                            <td>
                                                 <span
                                                     class="badge {{ ($pengadaan->status ?? '0') == '1' ? 'bg-success' : 'bg-secondary' }}">{{ ($pengadaan->status ?? '0') == '1' ? 'Selesai' : 'Proses' }}</span>
-                                            </td> --}}
-                                            <td>{{ $pengadaan->username ?? '-' }}</td>
+                                            </td>
+                                            <td>{{ optional($pengadaan->user)->username ?? ($pengadaan->username ?? '-') }}
+                                            </td>
                                             <td>
                                                 <a href="{{ url('/manage_pengadaan/' . ($pengadaan->idpengadaan ?? ($pengadaan->id ?? '')) . '/edit') }}"
                                                     class="btn btn-sm btn-warning me-1">Edit</a>
@@ -223,7 +228,7 @@
                                         </tr>
                                     @empty
                                         <tr>
-                                            <td colspan="8" class="text-center py-4">No
+                                            <td colspan="10" class="text-center py-4">No
                                                 pengadaan found</td>
                                         </tr>
                                     @endforelse
@@ -232,8 +237,6 @@
                         </div>
                     </div>
                 </div>
-
-                
 
             </div>
 

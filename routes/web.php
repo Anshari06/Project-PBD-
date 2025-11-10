@@ -35,6 +35,7 @@ Route::get('/manage_penerimaan', [App\Http\Controllers\PenerimaanController::cla
 Route::get('/detail_penerimaan', [App\Http\Controllers\DetailPenerimaanController::class, 'index']);
 // Manage Pengadaan
 Route::get('/manage_pengadaan', [App\Http\Controllers\PengadaanController::class, 'index'])->name('pengadaan.manage_pengadaan');
-Route::get('/detail_pengadaan {id}', [App\Http\Controllers\PengadaanController::class, 'show'])->name('pengadaan.detail_pengadaan');
+// detail route must include a slash before the {id} parameter so URLs like /detail_pengadaan/1 match
+Route::get('/detail_pengadaan/{id}', [App\Http\Controllers\PengadaanController::class, 'show'])->name('pengadaan.detail_pengadaan');
 // POST should call store() to create a new pengadaan
 Route::post('/manage_pengadaan', [App\Http\Controllers\PengadaanController::class, 'store'])->name('pengadaan.store');

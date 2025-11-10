@@ -98,8 +98,8 @@
                                             <td>{{ $satuan->nama_satuan ?? '-' }}</td>
                                             <td>
                                                 <span
-                                                    class="btn btn-sm {{ $satuan->status == 1 ? 'btn-success' : 'btn-danger' }}">
-                                                    {{ $satuan->status == 1 ? 'Aktif' : 'Non-aktif' }}
+                                                    class="btn btn-sm {{ $satuan->status_satuan == 1 ? 'btn-success' : 'btn-danger' }}">
+                                                    {{ $satuan->status_satuan == 1 ? 'Aktif' : 'Non-aktif' }}
                                                 </span>
                                             </td>
                                             <td>

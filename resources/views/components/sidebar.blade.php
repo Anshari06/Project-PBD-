@@ -56,8 +56,8 @@
         <hr>
         <p class="text-white-50 text-uppercase small px-3 mb-2">Transaksi</p>
         <li class="nav-item">
-            <x-nav-link href="/manage_penjualan" :active="request()->is('manage_penjualan') || request()->is('detail_penjualan*')" icn="bi bi-cash me-2">
-                Manage Penjualan</x-nav-link>
+            <x-nav-link href="/manage_pengadaan" :active="request()->is('manage_pengadaan*') || request()->is('detail_pengadaan*')" icn="bi bi-cart-check me-2">
+                Manage Pengadaan</x-nav-link>
         </li>
         <li class="nav-item">
             <!-- highlight this nav item for both manage_penerimaan and detail_penerimaan routes -->
@@ -65,15 +65,13 @@
                 icn="bi bi-clipboard-check me-2">
                 Manage Penerimaan</x-nav-link>
         </li>
+        <li class="nav-item">
+            <x-nav-link href="/manage_penjualan" :active="request()->is('manage_penjualan') || request()->is('detail_penjualan*')" icn="bi bi-cash me-2">
+                Manage Penjualan</x-nav-link>
+        </li>
 
         <li class="nav-item">
-            <x-nav-link href="/manage_pengadaan" :active="request()->is('manage_pengadaan*') || request()->is('detail_pengadaan*')"
-                icn="bi bi-cart-check me-2">
-                Manage Pengadaan</x-nav-link>
-        </li>
-        <li class="nav-item">
-            <x-nav-link href="/manage_pembayaran" :active="request()->is('manage_pembayaran*') || request()->is('detail_pembayaran*')"
-                icn="bi bi-card-checklist me-2">
+            <x-nav-link href="/manage_pembayaran" :active="request()->is('manage_pembayaran*') || request()->is('detail_pembayaran*')" icn="bi bi-card-checklist me-2">
                 Manage Kartu Stok</x-nav-link>
         </li>
 

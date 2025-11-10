@@ -47,32 +47,48 @@
                         <strong class="small mb-0">Add Pengadaan</strong>
                     </div>
                     <div class="card-body">
-                        <form action="{{ url('/manage_pengadaan') }}" method="POST"
-                            class="row g-2">
+                        <form action="{{ route('pengadaan.store') }}" method="POST"
+                            class="row g-3 ">
                             @csrf
-
                             {{-- idpengadaan is auto-increment; created_at handled by DB --}}
-
                             <div class="col-md-4">
                                 <label for="idvendor" class="form-label">Vendor</label>
-                                @if (isset($vendors) && count($vendors) > 0)
-                                    <select name="idvendor" id="idvendor"
-                                        class="form-select form-select-sm">
-                                        <option value="">-- Pilih Vendor --</option>
-                                        @foreach ($vendors as $v)
-                                            <option value="{{ $v->idvendor }}"
-                                                {{ old('idvendor') == $v->idvendor ? 'selected' : '' }}>
-                                                {{ $v->nama_vendor ?? ($v->name ?? 'Vendor ' . $v->idvendor) }}
-                                            </option>
-                                        @endforeach
-                                    </select>
-                                @else
-                                    <input type="number" name="idvendor" id="idvendor"
-                                        class="form-control form-control-sm" placeholder="ID Vendor"
-                                        value="{{ old('idvendor') }}">
-                                @endif
+                                <select name="idvendor" id="idvendor"
+                                    class="form-select form-select-sm">
+                                    <option value="">-- Pilih Vendor --</option>
+                                    @foreach ($vendors as $v)
+                                        <option value="{{ $v->idvendor }}"
+                                            {{ old('idvendor') == $v->idvendor ? 'selected' : '' }}>
+                                            {{ $v->nama_vendor ?? ($v->name ?? 'Vendor ' . $v->idvendor) }}
+                                        </option>
+                                    @endforeach
+                                </select>
                             </div>
 
+                            <div class="col-md-2">
+                                <label for="barang" class="form-label">Barang</label>
+                                <select name="barang" id="barang"
+                                    class="form-select form-select-sm">
+                                    <option value="">-- Pilih Barang --</option>
+                                    @foreach ($barangs as $b)
+                                        <option value="{{ $b->idbarang }}">
+                                            {{ $b->nama }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div class="col-md-2">
+                                <label for="jumlah" class="form-label">Jumlah</label>
+                                <input inputmode="numeric" name="jumlah" id="jumlah"
+                                    class="form-control form-control-sm text-end"
+                                    value="{{ old('jumlah') }}">
+                            </div>
+                            <div class="col-md-2">
+                                <label for="total_nilai" class="form-label">Total</label>
+                                <input inputmode="numeric" name="total_nilai" id="total_nilai"
+                                class="form-control form-control-sm text-end"
+                                value="{{ old('total_nilai') }}">
+                            </div>
                             <div class="col-md-2">
                                 <label for="status" class="form-label">Status</label>
                                 <select name="status" id="status"
@@ -87,42 +103,31 @@
                             </div>
 
                             <div class="col-md-2">
-                                <label for="ppn" class="form-label">PPN</label>
-                                <input inputmode="numeric" pattern="[0-9]*" name="ppn" id="ppn"
-                                    class="form-control form-control-sm text-end"
-                                    value="{{ old('ppn', 0) }}">
+                                <label for="iduser" class="form-label">ID User</label>
+                                <select name="iduser" id="iduser"
+                                    class="form-select form-select-sm">
+                                    <option value="">-- Pilih User --</option>
+                                    @foreach ($users as $u)
+                                        <option value="{{ $u->iduser }}">
+                                            {{ $u->username }}
+                                        </option>
+                                    @endforeach
+                                </select>
                             </div>
-
-                            <div class="col-md-2">
-                                <label for="subtotal_nilai" class="form-label">Subtotal</label>
-                                <input inputmode="numeric" pattern="[0-9]*" name="subtotal_nilai" id="subtotal_nilai"
-                                    class="form-control form-control-sm text-end"
-                                    value="{{ old('subtotal_nilai') }}">
-                            </div>
-
-                            <div class="col-md-2">
-                                <label for="total_nilai" class="form-label">Total</label>
-                                <input type="number" inputmode="numeric" name="total_nilai" id="total_nilai"
-                                    class="form-control form-control-sm text-end"
-                                    value="{{ old('total_nilai') }}">
-                            </div>
-
-                            {{-- set iduser from auth if available; fallback to number input for admin testing --}}
-                            @if (auth()->check())
-                                <input type="hidden" name="iduser" value="{{ auth()->id() }}">
-                            @else
-                                <div class="col-md-2">
-                                    <label for="iduser" class="form-label">ID User</label>
-                                    <input type="number" name="iduser" id="iduser"
-                                        class="form-control form-control-sm"
-                                        value="{{ old('iduser') }}">
-                                </div>
-                            @endif
 
                             <div class="col-12 text-end mt-1">
                                 <button type="submit" class="btn btn-primary btn-sm">Add
                                     Pengadaan</button>
                             </div>
+                            <div class="row">
+                                @if (session('success'))
+                                    <div class="alert alert-success alert-dismissible fade show" role="alert">
+                                        {{ session('success') }}
+                                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                    </div>
+                                @endif
+                            </div>
+
                         </form>
                     </div>
                 </div>
@@ -170,6 +175,7 @@
                                         <th scope="col" class="text-center">Tanggal</th>
                                         <th scope="col" style="width:150px">Supplier</th>
                                         <th scope="col" class="text-end">PPN</th>
+                                        {{-- <th scope="col" class="text-end">jumlah</th> --}}
                                         <th scope="col" class="text-end">Subtotal</th>
                                         <th scope="col">Status</th>
                                         <th scope="col">User</th>
@@ -180,26 +186,29 @@
                                     @forelse($pengadaans ?? [] as $pengadaan)
                                         <tr>
                                             <td>{{ $loop->iteration }}</td>
-                                            <td>{{ $pengadaan->idpengadaan ?? ($pengadaan->id ?? '-') }}
+                                            <td>{{ $pengadaan->idpengadaan ?? '-' }}
                                             </td>
                                             <td>{{ isset($pengadaan->tanggal) ? \Carbon\Carbon::parse($pengadaan->tanggal)->format('d M Y') : $pengadaan->created_at ?? '-' }}
                                             </td>
-                                            <td>{{ $pengadaan->vendor->nama_vendor ?? '-' }}</td>
+                                            <td>{{ optional($pengadaan->vendor)->nama_vendor ?? $pengadaan->nama_vendor ?? '-' }}</td>
                                             <td class="text-end">
-                                                {{ isset($pengadaan->ppn) ? number_format($pengadaan->ppn, 0, ',', '.') : '-' }}
+                                                {{ $pengadaan->ppn ?? '-' }} %
+                                            </td>
+                                            <td class="text-end">
+                                                {{ isset($pengadaan->jumlah) ? number_format($pengadaan->jumlah, 0, ',', '.') : '-' }}
                                             </td>
                                             <td class="text-end">
                                                 {{ isset($pengadaan->subtotal_nilai) ? number_format($pengadaan->subtotal_nilai, 0, ',', '.') : '-' }}
                                             </td>
-                                            <td>
+                                            {{-- <td>
                                                 <span
                                                     class="badge {{ ($pengadaan->status ?? '0') == '1' ? 'bg-success' : 'bg-secondary' }}">{{ ($pengadaan->status ?? '0') == '1' ? 'Selesai' : 'Proses' }}</span>
-                                            </td>
-                                            <td>{{ $pengadaan->user->username ?? '-' }}</td>
+                                            </td> --}}
+                                            <td>{{ $pengadaan->username ?? '-' }}</td>
                                             <td>
                                                 <a href="{{ url('/manage_pengadaan/' . ($pengadaan->idpengadaan ?? ($pengadaan->id ?? '')) . '/edit') }}"
                                                     class="btn btn-sm btn-warning me-1">Edit</a>
-                                                <a href="{{ url('/manage_pengadaan/' . ($pengadaan->idpengadaan ?? ($pengadaan->id ?? ''))) }}"
+                                                <a href="{{ url('/detail_pengadaan/' . ($pengadaan->idpengadaan ?? ($pengadaan->id ?? ''))) }}"
                                                     class="btn btn-sm btn-info me-1">View</a>
                                                 <form
                                                     action="{{ url('/manage_pengadaan/' . ($pengadaan->idpengadaan ?? ($pengadaan->id ?? ''))) }}"
@@ -223,6 +232,8 @@
                         </div>
                     </div>
                 </div>
+
+                
 
             </div>
 

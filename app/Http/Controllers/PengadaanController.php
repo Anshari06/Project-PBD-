@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Barang;
+// use App\Models\Barang;
 use App\Models\Pengadaan;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
@@ -27,18 +27,16 @@ class PengadaanController extends Controller
     {
         DB::insert("
             INSERT INTO pengadaan (idvendor, iduser, status, total_nilai, subtotal_nilai)
-                VALUES (?, ?, ?, ?, hitung_subtotal_ppn(?,?))", [
+                VALUES (?, ?, ?, 0, 0)", [
             $request->input('idvendor'),
             $request->input('iduser'),
             $request->input('status'),
-            $request->input('total_nilai'),
-            $request->input('total_nilai'), // tot
-            11 // persen PPN
         ]);
 
         $idpengadaan = DB::getPdo()->lastInsertId();
 
-        DB::insert("
+        DB::insert(
+            "
             INSERT INTO detail_pengadaan (idbarang, harga_satuan, jumlah, sub_total, idpengadaan)
                 VALUES (?, (SELECT harga from barang where idbarang=?) , ?, hitung_subtotal(?, (SELECT harga from barang where idbarang=?)), ?)",
             [
@@ -49,7 +47,22 @@ class PengadaanController extends Controller
                 $request->input('idbarang'),
                 $idpengadaan,
             ]
-            );
+        );
+
+        DB::update("
+            UPDATE pengadaan 
+            SET subtotal_nilai = (
+                SELECT SUM(sub_total) 
+                FROM detail_pengadaan 
+                WHERE detail_pengadaan.idpengadaan = pengadaan.idpengadaan
+            )
+            WHERE idpengadaan = ?",
+            [$idpengadaan]
+        );
+        DB::update("
+            UPDATE pengadaan
+            SET total_nilai = hitung_total_ppn(subtotal_nilai, 11)
+            WHERE idpengadaan = ?", [$idpengadaan]);
 
 
         return redirect()->route('pengadaan.manage_pengadaan')->with('success', 'Pengadaan berhasil ditambahkan.');

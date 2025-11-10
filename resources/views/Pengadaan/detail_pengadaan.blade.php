@@ -81,15 +81,15 @@
                                     readonly>
                             </div>
                             <div class="col-md-3">
-                                <label class="form-label small text-muted">Total Nilai</label>
-                                <input type="text" class="form-control form-control-sm"
-                                    value="{{ isset($pengadaan->total_nilai) ? number_format($pengadaan->total_nilai, 0, ',', '.') : '-' }}"
-                                    readonly>
-                            </div>
-                            <div class="col-md-3">
                                 <label class="form-label small text-muted">Subtotal</label>
                                 <input type="text" class="form-control form-control-sm"
                                     value="{{ isset($pengadaan->subtotal_nilai) ? number_format($pengadaan->subtotal_nilai, 0, ',', '.') : '-' }}"
+                                    readonly>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label small text-muted">Total Nilai</label>
+                                <input type="text" class="form-control form-control-sm"
+                                    value="{{ isset($pengadaan->total_nilai) ? number_format($pengadaan->total_nilai, 0, ',', '.') : '-' }}"
                                     readonly>
                             </div>
 

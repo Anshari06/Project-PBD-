@@ -39,3 +39,5 @@ Route::get('/manage_pengadaan', [App\Http\Controllers\PengadaanController::class
 Route::get('/detail_pengadaan/{id}', [App\Http\Controllers\PengadaanController::class, 'show'])->name('pengadaan.detail_pengadaan');
 // POST should call store() to create a new pengadaan
 Route::post('/manage_pengadaan', [App\Http\Controllers\PengadaanController::class, 'store'])->name('pengadaan.store');
+// DELETE should call destroy() to delete a pengadaan
+// Route::delete('/manage_pengadaan/{id}', [App\Http\Controllers\PengadaanController::class, 'destroy'])->name('pengadaan.destroy');

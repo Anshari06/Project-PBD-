@@ -180,7 +180,7 @@
                                             <td>{{ $barang->nama_satuan ?? '-' }}</td>
                                             <td>
                                                 <span
-                                                    class="btn btn-sm {{ $barang->status == 1 ? 'btn-success' : 'btn-danger' }}">
+                                                    class="badge {{ $barang->status == 1 ? 'bg-success' : 'bg-danger' }}">
                                                     {{ $barang->status == 1 ? 'Aktif' : 'Non-aktif' }}
                                                 </span>
                                             </td>

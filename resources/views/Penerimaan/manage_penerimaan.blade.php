@@ -117,8 +117,9 @@
                                     <tr>
                                         <th style="width:70px">No</th>
                                         <th style="width:140px">ID Penerimaan</th>
-                                        <th style="width:160px">Created At</th>
+                                        <th style="width:160px">Tanggal Terima</th>
                                         <th>ID Pengadaan</th>
+                                        <th>Tanggal Pengadaan</th>
                                         <th>ID User</th>
                                         <th style="width:120px">Status</th>
                                         <th style="width:180px">Actions</th>

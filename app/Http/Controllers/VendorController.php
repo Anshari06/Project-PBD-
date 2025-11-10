@@ -10,7 +10,7 @@ class VendorController extends Controller
 {
     public function index(Request $request)
     {
-        $allVendors = Vendor::all();
+        $allVendors = DB::table('vendor_aktif')->get();
 
         $vendorStatus = null;
 

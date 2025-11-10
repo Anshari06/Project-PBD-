@@ -11,7 +11,7 @@ class SatuanController extends Controller
     {
         // Ambil daftar satuan unik (satu baris per idsatuan) dari view.
         // Pilih kolom yang diperlukan agar DISTINCT bekerja dengan benar.
-        $satuans = collect(DB::select('SELECT DISTINCT * FROM barang_satuan_stock ORDER BY idsatuan'));
+        $satuans = collect(DB::select('SELECT DISTINCT * FROM barang_satuan_stock_status ORDER BY idsatuan'));
 
         $dataSatuans = collect(DB::select('SELECT * FROM satuan'));
 

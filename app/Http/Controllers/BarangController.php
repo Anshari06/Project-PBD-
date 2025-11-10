@@ -10,7 +10,7 @@ class BarangController extends Controller
 {
     public function index(Request $request)
     {
-        $sql = 'SELECT * FROM barang_satuan_stock_status ORDER BY idbarang';
+        $sql = 'SELECT * FROM barang_aktif ORDER BY idbarang';
         $barangs = DB::select($sql);
 
         // ini buat nangkep inputan dari form

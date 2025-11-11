@@ -71,7 +71,8 @@
                                     class="form-select form-select-sm">
                                     <option value="">-- Pilih Barang --</option>
                                     @foreach ($barangs as $b)
-                                        <option value="{{ $b->idbarang }}" data-harga="{{ $b->harga ?? 0 }}">
+                                        <option value="{{ $b->idbarang }}"
+                                            data-harga="{{ $b->harga ?? 0 }}">
                                             {{ $b->nama }}
                                         </option>
                                     @endforeach
@@ -118,24 +119,31 @@
                             <div class="col-12 mt-2">
                                 <div class="row g-2">
                                     <div class="col-md-3">
-                                        <label class="form-label small text-muted">Prediksi Subtotal</label>
-                                        <div id="pred_subtotal" class="form-control form-control-sm">-</div>
+                                        <label class="form-label small text-muted">Prediksi
+                                            Subtotal</label>
+                                        <div id="pred_subtotal"
+                                            class="form-control form-control-sm">-</div>
                                     </div>
                                     <div class="col-md-3">
-                                        <label class="form-label small text-muted">Prediksi PPN ({{ config('app.ppn_percent', 11) }}%)</label>
-                                        <div id="pred_ppn" class="form-control form-control-sm">-</div>
+                                        <label class="form-label small text-muted">Prediksi PPN
+                                            ({{ config('app.ppn_percent', 11) }}%)</label>
+                                        <div id="pred_ppn" class="form-control form-control-sm">-
+                                        </div>
                                     </div>
                                     <div class="col-md-3">
-                                        <label class="form-label small text-muted">Prediksi Total</label>
-                                        <div id="pred_total" class="form-control form-control-sm">-</div>
+                                        <label class="form-label small text-muted">Prediksi
+                                            Total</label>
+                                        <div id="pred_total" class="form-control form-control-sm">-
+                                        </div>
                                     </div>
                                     <div class="col-md-3">
                                         <small class="text-muted">Catatan</small>
-                                        <div class="form-text">Preview dihitung di browser; klik Add untuk menyimpan.</div>
+                                        <div class="form-text">Preview dihitung di browser; klik Add
+                                            untuk menyimpan.</div>
                                     </div>
                                 </div>
                             </div>
-                            
+
                             <div class="row">
                                 @if (session('success'))
                                     <div class="alert alert-success alert-dismissible fade show fs-sm"
@@ -191,10 +199,10 @@
                                     <tr>
                                         <th style="width:50px">No</th>
                                         <th style="width:50px ">ID</th>
-                                        <th class="text-center">Tanggal</th>
+                                        <th style="width: " class="text-center">Tanggal</th>
                                         <th>Supplier</th>
                                         <th class="text-end">Subtotal</th>
-                                        <th  style="width:60px"class="text-end">PPN</th>
+                                        <th style="width:60px"class="text-end">PPN</th>
                                         <th class="text-end">Total</th>
                                         <th>Status</th>
                                         <th>User</th>
@@ -210,7 +218,7 @@
                                             <td class="text-center">
                                                 {{ isset($pengadaan->tanggal) ? \Carbon\Carbon::parse($pengadaan->tanggal)->format('d M Y') : $pengadaan->created_at ?? '-' }}
                                             </td>
-                                            <td>{{ optional($pengadaan->vendor)->nama_vendor ?? ($pengadaan->nama_vendor ?? '-') }}
+                                            <td>{{$pengadaan->nama_vendor ?? '-'}}
                                             </td>
                                             <td class="text-end">
                                                 {{ isset($pengadaan->subtotal_nilai) ? number_format($pengadaan->subtotal_nilai, 0, ',', '.') : '-' }}
@@ -225,7 +233,7 @@
                                                 <span
                                                     class="badge {{ ($pengadaan->status ?? '0') == '1' ? 'bg-success' : 'bg-secondary' }}">{{ ($pengadaan->status ?? '0') == '1' ? 'Selesai' : 'Proses' }}</span>
                                             </td>
-                                            <td>{{ optional($pengadaan->user)->username ?? ($pengadaan->username ?? '-') }}
+                                            <td>{{ $pengadaan->username ?? '-' }}
                                             </td>
                                             <td>
                                                 <a href="{{ url('/manage_pengadaan/' . ($pengadaan->idpengadaan ?? ($pengadaan->id ?? '')) . '/edit') }}"
@@ -233,7 +241,7 @@
                                                 <a href="{{ url('/detail_pengadaan/' . ($pengadaan->idpengadaan ?? ($pengadaan->id ?? ''))) }}"
                                                     class="btn btn-sm btn-info me-1">View</a>
                                                 <form
-                                                    action="{{ url('/delete_pengadaan')}} . ($pengadaan->idpengadaan ?? ($pengadaan->id ?? ''))) }}"
+                                                    action="{{ url('/delete_pengadaan') }} . ($pengadaan->idpengadaan ?? ($pengadaan->id ?? ''))) }}"
                                                     method="POST" class="d-inline"
                                                     onsubmit="return confirm('Hapus pengadaan ini?');">
                                                     @csrf
@@ -262,8 +270,8 @@
 </body>
 <script>
     // Prediction script: compute subtotal, ppn and total from selected barang and jumlah
-    (function(){
-        function numberFormat(n){
+    (function() {
+        function numberFormat(n) {
             return new Intl.NumberFormat('id-ID').format(n);
         }
 
@@ -275,18 +283,19 @@
         const predTotal = document.getElementById('pred_total');
         const ppnPercent = parseFloat('{{ config('app.ppn_percent', 11) }}');
 
-        if(!barangSelect || !jumlahInput) return;
+        if (!barangSelect || !jumlahInput) return;
 
-        function getSelectedHarga(){
+        function getSelectedHarga() {
             const opt = barangSelect.options[barangSelect.selectedIndex];
-            if(!opt) return 0;
+            if (!opt) return 0;
             const h = opt.getAttribute('data-harga');
             return h ? parseFloat(h) : 0;
         }
 
-        function computeAndShow(){
+        function computeAndShow() {
             const harga = getSelectedHarga();
-            const jumlah = parseFloat((jumlahInput.value || '0').toString().replace(/[^0-9.-]+/g,'')) || 0;
+            const jumlah = parseFloat((jumlahInput.value || '0').toString().replace(
+                /[^0-9.-]+/g, '')) || 0;
             const subtotal = Math.round(harga * jumlah);
             const ppn = Math.round(subtotal * (ppnPercent / 100));
             const total = subtotal + ppn;
@@ -297,7 +306,7 @@
             predTotal.textContent = total ? numberFormat(total) : '-';
 
             // put raw total into the form input (server expects a plain number)
-            if(totalInput){
+            if (totalInput) {
                 totalInput.value = total;
             }
         }

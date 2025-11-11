@@ -23,6 +23,8 @@ Route::get('/manage_satuan', [App\Http\Controllers\SatuanController::class, 'ind
 
 // Manage Vendor
 Route::get('/manage_vendor', [App\Http\Controllers\VendorController::class, 'index']);
+// Manage Margin
+Route::get('/manage_margin', [App\Http\Controllers\MarginController::class, 'index'])->name('margin.manage_margin');
 
 // Manage Penjualan
 Route::get('/manage_penjualan', [App\Http\Controllers\PenjualanController::class, 'index']);

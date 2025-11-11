@@ -13,7 +13,7 @@ class PengadaanController extends Controller
     public function index()
     {
         // eager-load user relation so we can access $pengadaan->user->username in the view
-        $pengadaans = Pengadaan::all();
+        $pengadaans = DB::select('SELECT * FROM Pengadaan_barang order BY idpengadaan');
         $detailPengadaans = DB::select('SELECT * FROM Detail_Pengadaan_VU');
         $vendors = DB::table('vendor_aktif')->get();
         $users = User::all();
@@ -49,7 +49,8 @@ class PengadaanController extends Controller
             ]
         );
 
-        DB::update("
+        DB::update(
+            "
             UPDATE pengadaan 
             SET subtotal_nilai = (
                 SELECT SUM(sub_total) 

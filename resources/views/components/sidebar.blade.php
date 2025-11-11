@@ -53,6 +53,10 @@
             <x-nav-link href="/manage_vendor" :active="request()->is('manage_vendor')" icn="bi bi-building me-2">
                 Manage Vendor</x-nav-link>
         </li>
+        <li class="nav-item">
+            <x-nav-link href="/manage_margin" :active="request()->is('manage_margin')" icn="bi bi-graph-up me-2">
+                Manage Margin</x-nav-link>
+        </li>
         <hr>
         <p class="text-white-50 text-uppercase small px-3 mb-2">Transaksi</p>
         <li class="nav-item">

@@ -34,7 +34,7 @@
     <hr>
     <ul class="nav nav-pills flex-column mb-auto">
         <li class="nav-item">
-            <x-nav-link href="/" :active="request()->is('/')"
+            <x-nav-link href="/dashboard" :active="request()->is('/')"
                 icn="bi bi-house-door me-2">Dashboard</x-nav-link>
         </li>
         <li>
@@ -82,7 +82,7 @@
     </ul>
     <hr>
     <div class="dropdown">
-        <a href="#"
+        <a href=""
             class="d-flex align-items-center text-white text-decoration-none dropdown-toggle"
             id="dropdownUser1" data-bs-toggle="dropdown" aria-expanded="false">
             <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS2IYhSn8Y9S9_HF3tVaYOepJBcrYcd809pBA&s"
@@ -91,7 +91,12 @@
         </a>
         <ul class="dropdown-menu dropdown-menu-dark text-small shadow"
             aria-labelledby="dropdownUser1" style="">
-            <li><a class="dropdown-item" href="#">Sign out</a></li>
+            <li>
+                <a class="dropdown-item" href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">Sign out</a>
+            </li>
         </ul>
+        <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+            @csrf
+        </form>
     </div>
 </div>

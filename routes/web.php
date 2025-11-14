@@ -3,14 +3,14 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ManageUserController;
-
+use App\Http\Controllers\AuthLoginController;
 
 // dashboard route handled by controller
-Route::get('/', [DashboardController::class, 'index']);
 
-Route::get('/login', function () {
-    return view('login');
-});
+Route::get('/', [AuthLoginController::class, 'showLoginForm'])->name('login');
+Route::post('/login', [AuthLoginController::class, 'login'])->name('login.submit');
+Route::post('/logout', [AuthLoginController::class, 'logout'])->name('logout');
+Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
 // Manage user
 Route::get('/manage_user', [ManageUserController::class, 'index']);

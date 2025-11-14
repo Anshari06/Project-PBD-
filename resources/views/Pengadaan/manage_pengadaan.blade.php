@@ -98,16 +98,9 @@
                             </div>
 
                             <div class="col-md-2">
-                                <label for="iduser" class="form-label">ID User</label>
-                                <select name="iduser" id="iduser"
-                                    class="form-select form-select-sm">
-                                    <option value="">-- Pilih User --</option>
-                                    @foreach ($users as $u)
-                                        <option value="{{ $u->iduser }}">
-                                            {{ $u->username }}
-                                        </option>
-                                    @endforeach
-                                </select>
+                                <label class="form-label">User</label>
+                                <div class="form-control form-control-sm">{{ auth()->user()->username ?? '-' }}</div>
+                                <input type="hidden" name="iduser" value="{{ auth()->id() }}">
                             </div>
 
                             <div class="col-12 text-end mt-1">

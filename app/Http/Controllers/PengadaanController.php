@@ -6,6 +6,7 @@ namespace App\Http\Controllers;
 use App\Models\Pengadaan;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 
 class PengadaanController extends Controller
@@ -29,7 +30,7 @@ class PengadaanController extends Controller
             INSERT INTO pengadaan (idvendor, iduser, status, total_nilai, subtotal_nilai)
                 VALUES (?, ?, ?, 0, 0)", [
             $request->input('idvendor'),
-            $request->input('iduser'),
+            Auth::id(),
             $request->input('status'),
         ]);
 

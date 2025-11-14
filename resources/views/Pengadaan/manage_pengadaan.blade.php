@@ -99,7 +99,8 @@
 
                             <div class="col-md-2">
                                 <label class="form-label">User</label>
-                                <div class="form-control form-control-sm">{{ auth()->user()->username ?? '-' }}</div>
+                                <div class="form-control form-control-sm">
+                                    {{ auth()->user()->username ?? '-' }}</div>
                                 <input type="hidden" name="iduser" value="{{ auth()->id() }}">
                             </div>
 
@@ -136,18 +137,6 @@
                                     </div>
                                 </div>
                             </div>
-
-                            <div class="row">
-                                @if (session('success'))
-                                    <div class="alert alert-success alert-dismissible fade show fs-sm"
-                                        role="alert">
-                                        {{ session('success') }}
-                                        <button type="button" class="btn-close"
-                                            data-bs-dismiss="alert" aria-label="Close"></button>
-                                    </div>
-                                @endif
-                            </div>
-
                         </form>
                     </div>
                 </div>
@@ -183,6 +172,14 @@
                     </div>
                 </div> --}}
 
+                <div class="row">
+                    @if (session()->has('success'))
+                        <div class="alert alert-success fs-sm" role="alert">
+                            {{ session('success') }}
+                        </div>
+                    @endif
+                </div>
+                
                 <!-- Pengadaan Table -->
                 <div class="card">
                     <div class="card-body p-0">
@@ -211,7 +208,7 @@
                                             <td class="text-center">
                                                 {{ isset($pengadaan->tanggal) ? \Carbon\Carbon::parse($pengadaan->tanggal)->format('d M Y') : $pengadaan->created_at ?? '-' }}
                                             </td>
-                                            <td>{{$pengadaan->nama_vendor ?? '-'}}
+                                            <td>{{ $pengadaan->nama_vendor ?? '-' }}
                                             </td>
                                             <td class="text-end">
                                                 {{ isset($pengadaan->subtotal_nilai) ? number_format($pengadaan->subtotal_nilai, 0, ',', '.') : '-' }}
@@ -234,7 +231,7 @@
                                                 <a href="{{ url('/detail_pengadaan/' . ($pengadaan->idpengadaan ?? ($pengadaan->id ?? ''))) }}"
                                                     class="btn btn-sm btn-info me-1">View</a>
                                                 <form
-                                                    action="{{ url('/delete_pengadaan') }} . ($pengadaan->idpengadaan ?? ($pengadaan->id ?? ''))) }}"
+                                                    action="{{ route('pengadaan.destroy', $pengadaan->idpengadaan ?? ($pengadaan->id ?? '')) }}"
                                                     method="POST" class="d-inline"
                                                     onsubmit="return confirm('Hapus pengadaan ini?');">
                                                     @csrf

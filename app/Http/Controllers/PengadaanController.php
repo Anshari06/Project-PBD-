@@ -77,4 +77,15 @@ class PengadaanController extends Controller
 
         return view('Pengadaan.detail_pengadaan', compact('pengadaan', 'detailPengadaans'));
     }
+
+    public function destroy($id)
+    {
+        // Delete related detail_pengadaan records first
+        DB::table('detail_pengadaan')->where('idpengadaan', $id)->delete();
+
+        // Then delete the pengadaan record
+        DB::table('pengadaan')->where('idpengadaan', $id)->delete();
+
+        return redirect()->route('pengadaan.manage_pengadaan')->with('success', 'Pengadaan berhasil dihapus.');
+    }
 }

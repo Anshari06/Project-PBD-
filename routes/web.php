@@ -33,6 +33,8 @@ Route::get('/detail_penjualan', [App\Http\Controllers\DetailPenjualanController:
 
 // Manage Penerimaan
 Route::get('/manage_penerimaan', [App\Http\Controllers\PenerimaanController::class, 'index']);
+// Store Penerimaan
+Route::post('/manage_penerimaan', [App\Http\Controllers\PenerimaanController::class, 'store'])->name('penerimaan.store');
 // Detail Penerimaan
 Route::get('/detail_penerimaan', [App\Http\Controllers\DetailPenerimaanController::class, 'index']);
 // Manage Pengadaan

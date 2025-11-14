@@ -15,7 +15,7 @@ class CekRole
             return redirect('/login')->with('error', 'Silakan login terlebih dahulu');
         }
 
-        if (Auth::user()->role != $role) {
+        if (Auth::user()->idrole != $role) {
             return redirect('/login')->with('error', 'Tidak punya akses');
         }
 

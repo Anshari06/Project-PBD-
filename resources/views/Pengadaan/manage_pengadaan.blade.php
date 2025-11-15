@@ -86,14 +86,12 @@
                             </div>
                             <div class="col-md-2">
                                 <label for="status" class="form-label">Status</label>
-                                <select name="status" id="status"
-                                    class="form-select form-select-sm">
+                                <select name="status" id="status" class="form-select form-select-sm">
                                     <option value="">-- Status --</option>
-                                    <option value="1"
-                                        {{ old('status') == '1' ? 'selected' : '' }}>Selesai
-                                    </option>
-                                    <option value="0"
-                                        {{ old('status') == '0' ? 'selected' : '' }}>Proses</option>
+                                    <option value="P" {{ old('status') == 'in Process' ? 'selected' : '' }}>In Process</option>
+                                    <option value="O" {{ old('status') == 'sebagian' ? 'selected' : '' }}>Sebagian</option>
+                                    <option value="S" {{ old('status') == 'selesai' ? 'selected' : '' }}>Selesai</option>
+                                    <option value="B" {{ old('status') == 'batal' ? 'selected' : '' }}>Batal</option>
                                 </select>
                             </div>
 
@@ -172,7 +170,7 @@
                     </div>
                 </div> --}}
 
-                <div class="row">
+                <div class="row mt-2">
                     @if (session()->has('success'))
                         <div class="alert alert-success fs-sm" role="alert">
                             {{ session('success') }}
@@ -220,8 +218,17 @@
                                                 {{ isset($pengadaan->total_nilai) ? number_format($pengadaan->total_nilai, 0, ',', '.') : '-' }}
                                             </td>
                                             <td>
-                                                <span
-                                                    class="badge {{ ($pengadaan->status ?? '0') == '1' ? 'bg-success' : 'bg-secondary' }}">{{ ($pengadaan->status ?? '0') == '1' ? 'Selesai' : 'Proses' }}</span>
+                                                @php
+                                                    $st = $pengadaan->status;
+                                                    switch($st) {
+                                                        case 'P': $cls = 'bg-primary'; $lbl = 'in-process'; break;
+                                                        case 'O': $cls = 'bg-warning text-dark'; $lbl = 'Sebagian'; break;
+                                                        case 'S': $cls = 'bg-success'; $lbl = 'Selesai'; break;
+                                                        case 'B': $cls = 'bg-danger'; $lbl = 'Batal'; break;
+                                                        default: $cls = 'bg-secondary'; $lbl = $st; break;
+                                                    }
+                                                @endphp
+                                                <span class="badge {{ $cls }}">{{ $lbl }}</span>
                                             </td>
                                             <td>{{ $pengadaan->username ?? '-' }}
                                             </td>

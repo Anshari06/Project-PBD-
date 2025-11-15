@@ -75,7 +75,7 @@
         </li>
 
         <li class="nav-item">
-            <x-nav-link href="/manage_pembayaran" :active="request()->is('manage_pembayaran*') || request()->is('detail_pembayaran*')" icn="bi bi-card-checklist me-2">
+            <x-nav-link href="/manage_kartu_stok" :active="request()->is('manage_kartu_stok*') || request()->is('manage_kartu_stok*')" icn="bi bi-card-checklist me-2">
                 Manage Kartu Stok</x-nav-link>
         </li>
 

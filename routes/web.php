@@ -40,4 +40,6 @@ Route::middleware(['auth', 'cekrole:1'])->group(function () {
     Route::get('/detail_pengadaan/{id}', [App\Http\Controllers\PengadaanController::class, 'show'])->name('pengadaan.detail_pengadaan');
     Route::post('/manage_pengadaan', [App\Http\Controllers\PengadaanController::class, 'store'])->name('pengadaan.store');
     Route::delete('/delete_pengadaan/{id}', [App\Http\Controllers\PengadaanController::class, 'destroy'])->name('pengadaan.destroy');
+    // Manage Kartu Stok
+    Route::get('/manage_kartu_stok', [App\Http\Controllers\KartuStok::class, 'index'])->name('kartu_stok.kartu_stok');
 });

@@ -1,317 +1,183 @@
-<head>
-    <!-- Required meta tags -->
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
-        rel="stylesheet"
-        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
-        crossorigin="anonymous">
-    <!-- Bootstrap Icons -->
-    <link rel="stylesheet"
-        href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-    <title>Manage Pengadaan</title>
-</head>
+@extends('layouts.app')
 
-<body class="d-flex" style="min-height: 100vh; overflow: hidden;">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
-        crossorigin="anonymous"></script>
+@section('title', 'Manage Pengadaan')
 
-    {{-- Sidebar --}}
-    <x-sidebar></x-sidebar>
+@section('content')
+<div class="mb-3">
+    <div class="d-flex justify-content-between align-items-center mb-2">
+        <div>
+            <h2 class="mb-0">Pengadaan Management</h2>
+            <p class="text-muted small mb-0">Manage procurement requests — add, view and search.</p>
+        </div>
+    </div>
+</div>
 
-    {{-- Main Content Area --}}
-    <main class="flex-grow-1 d-flex flex-column" style="height: 100vh; overflow: hidden;">
-        {{-- Header Fixed --}}
-        <x-header>Manage Pengadaan</x-header>
+<!-- Inline Add Pengadaan Form -->
+<div class="card mb-3">
+    <div class="card-header py-2">
+        <strong class="small mb-0">Add Pengadaan</strong>
+    </div>
+    <div class="card-body">
+        <form action="{{ route('pengadaan.store') }}" method="POST" class="row g-3">
+            @csrf
 
-        {{-- Content Area with Scroll --}}
-        <div class="flex-grow-1" style="overflow-y: auto;">
-
-            <div class="container-fluid p-3">
-                {{-- head --}}
-                <div class="mb-3">
-                    <div class="d-flex justify-content-between align-items-center mb-2">
-                        <div>
-                            <h2 class="mb-0">Pengadaan Management</h2>
-                            <p class="text-muted small mb-0">Manage procurement requests (pengadaan)
-                                — add, view and search.</p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Inline Add Pengadaan Form -->
-                <div class="card mb-3">
-                    <div class="card-header py-2">
-                        <strong class="small mb-0">Add Pengadaan</strong>
-                    </div>
-                    <div class="card-body">
-                        <form action="{{ route('pengadaan.store') }}" method="POST"
-                            class="row g-3 ">
-                            @csrf
-                            {{-- idpengadaan is auto-increment; created_at handled by DB --}}
-                            <div class="col-md-4">
-                                <label for="idvendor" class="form-label">Vendor</label>
-                                <select name="idvendor" id="idvendor"
-                                    class="form-select form-select-sm">
-                                    <option value="">-- Pilih Vendor --</option>
-                                    @foreach ($vendors as $v)
-                                        <option value="{{ $v->idvendor }}"
-                                            {{ old('idvendor') == $v->idvendor ? 'selected' : '' }}>
-                                            {{ $v->nama_vendor ?? ($v->name ?? 'Vendor ' . $v->idvendor) }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                            </div>
-
-                            <div class="col-md-2">
-                                <label for="barang" class="form-label">Barang</label>
-                                <select name="idbarang" id="idbarang"
-                                    class="form-select form-select-sm">
-                                    <option value="">-- Pilih Barang --</option>
-                                    @foreach ($barangs as $b)
-                                        <option value="{{ $b->idbarang }}"
-                                            data-harga="{{ $b->harga ?? 0 }}">
-                                            {{ $b->nama }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                            </div>
-                            <div class="col-md-2">
-                                <label for="jumlah" class="form-label">Jumlah</label>
-                                <input inputmode="numeric" name="jumlah" id="jumlah"
-                                    class="form-control form-control-sm text-end"
-                                    value="{{ old('jumlah') }}">
-                            </div>
-                            <div class="col-md-2">
-                                <label for="status" class="form-label">Status</label>
-                                <select name="status" id="status" class="form-select form-select-sm">
-                                    <option value="">-- Status --</option>
-                                    <option value="P" {{ old('status') == 'in Process' ? 'selected' : '' }}>In Process</option>
-                                    <option value="O" {{ old('status') == 'sebagian' ? 'selected' : '' }}>Sebagian</option>
-                                    <option value="S" {{ old('status') == 'selesai' ? 'selected' : '' }}>Selesai</option>
-                                    <option value="B" {{ old('status') == 'batal' ? 'selected' : '' }}>Batal</option>
-                                </select>
-                            </div>
-
-                            <div class="col-md-2">
-                                <label class="form-label">User</label>
-                                <div class="form-control form-control-sm">
-                                    {{ auth()->user()->username ?? '-' }}</div>
-                                <input type="hidden" name="iduser" value="{{ auth()->id() }}">
-                            </div>
-
-                            <div class="col-12 text-end mt-1">
-                                <button type="submit" class="btn btn-primary btn-sm">Add
-                                    Pengadaan</button>
-                            </div>
-
-                            {{-- Prediction preview (uses selected barang harga and jumlah) --}}
-                            <div class="col-12 mt-2">
-                                <div class="row g-2">
-                                    <div class="col-md-3">
-                                        <label class="form-label small text-muted">Prediksi
-                                            Subtotal</label>
-                                        <div id="pred_subtotal"
-                                            class="form-control form-control-sm">-</div>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <label class="form-label small text-muted">Prediksi PPN
-                                            ({{ config('app.ppn_percent', 11) }}%)</label>
-                                        <div id="pred_ppn" class="form-control form-control-sm">-
-                                        </div>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <label class="form-label small text-muted">Prediksi
-                                            Total</label>
-                                        <div id="pred_total" class="form-control form-control-sm">-
-                                        </div>
-                                    </div>
-                                    <div class="col-md-3">
-                                        <small class="text-muted">Catatan</small>
-                                        <div class="form-text">Preview dihitung di browser; klik Add
-                                            untuk menyimpan.</div>
-                                    </div>
-                                </div>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-
-                <!-- Search Card -->
-                {{-- <div class="card mb-4 shadow-sm">
-                    <div class="card-body">
-                        <form action="{{ url('/manage_pengadaan') }}" method="GET"
-                            class="row g-2 align-items-end">
-                            <div class="col-md-4">
-                                <label for="q_no_bukti" class="form-label visually-hidden">No.
-                                    Bukti</label>
-                                <input type="text" name="no_bukti" id="q_no_bukti"
-                                    class="form-control form-control-sm"
-                                    placeholder="Search by No. Bukti"
-                                    value="{{ request('no_bukti') }}">
-                            </div>
-                            <div class="col-md-4">
-                                <label for="q_supplier"
-                                    class="form-label visually-hidden">Supplier</label>
-                                <input type="text" name="supplier" id="q_supplier"
-                                    class="form-control form-control-sm"
-                                    placeholder="Search by Supplier"
-                                    value="{{ request('supplier') }}">
-                            </div>
-                            <div class="col-md-2 d-grid">
-                                <button type="submit"
-                                    class="btn btn-primary btn-sm">Search</button>
-                            </div>
-                        </form>
-                        <p class="mt-2 text-muted small mb-0">Use the fields above to filter
-                            pengadaan records.</p>
-                    </div>
-                </div> --}}
-
-                <div class="row mt-2">
-                    @if (session()->has('success'))
-                        <div class="alert alert-success fs-sm" role="alert">
-                            {{ session('success') }}
-                        </div>
-                    @endif
-                </div>
-                
-                <!-- Pengadaan Table -->
-                <div class="card">
-                    <div class="card-body p-0">
-                        <div class="table-responsive">
-                            <table class="table table-striped table-hover mb-0">
-                                <thead>
-                                    <tr>
-                                        <th style="width:50px">No</th>
-                                        <th style="width:50px ">ID</th>
-                                        <th style="width: " class="text-center">Tanggal</th>
-                                        <th>Supplier</th>
-                                        <th class="text-end">Subtotal</th>
-                                        <th style="width:60px"class="text-end">PPN</th>
-                                        <th class="text-end">Total</th>
-                                        <th>Status</th>
-                                        <th>User</th>
-                                        <th>Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @forelse($pengadaans ?? [] as $pengadaan)
-                                        <tr>
-                                            <td>{{ $loop->iteration }}</td>
-                                            <td>{{ $pengadaan->idpengadaan ?? ($pengadaan->id ?? '-') }}
-                                            </td>
-                                            <td class="text-center">
-                                                {{ isset($pengadaan->tanggal) ? \Carbon\Carbon::parse($pengadaan->tanggal)->format('d M Y') : $pengadaan->created_at ?? '-' }}
-                                            </td>
-                                            <td>{{ $pengadaan->nama_vendor ?? '-' }}
-                                            </td>
-                                            <td class="text-end">
-                                                {{ isset($pengadaan->subtotal_nilai) ? number_format($pengadaan->subtotal_nilai, 0, ',', '.') : '-' }}
-                                            </td>
-                                            <td class="text-end">
-                                                {{ isset($pengadaan->ppn) ? number_format($pengadaan->ppn, 0, ',', '.') . ' %' : config('app.ppn_percent', 11) . ' %' }}
-                                            </td>
-                                            <td class="text-end">
-                                                {{ isset($pengadaan->total_nilai) ? number_format($pengadaan->total_nilai, 0, ',', '.') : '-' }}
-                                            </td>
-                                            <td>
-                                                @php
-                                                    $st = $pengadaan->status;
-                                                    switch($st) {
-                                                        case 'P': $cls = 'bg-primary'; $lbl = 'in-process'; break;
-                                                        case 'O': $cls = 'bg-warning text-dark'; $lbl = 'Sebagian'; break;
-                                                        case 'S': $cls = 'bg-success'; $lbl = 'Selesai'; break;
-                                                        case 'B': $cls = 'bg-danger'; $lbl = 'Batal'; break;
-                                                        default: $cls = 'bg-secondary'; $lbl = $st; break;
-                                                    }
-                                                @endphp
-                                                <span class="badge {{ $cls }}">{{ $lbl }}</span>
-                                            </td>
-                                            <td>{{ $pengadaan->username ?? '-' }}
-                                            </td>
-                                            <td>
-                                                <a href="{{ url('/manage_pengadaan/' . ($pengadaan->idpengadaan ?? ($pengadaan->id ?? '')) . '/edit') }}"
-                                                    class="btn btn-sm btn-warning me-1">Edit</a>
-                                                <a href="{{ url('/detail_pengadaan/' . ($pengadaan->idpengadaan ?? ($pengadaan->id ?? ''))) }}"
-                                                    class="btn btn-sm btn-info me-1">View</a>
-                                                <form
-                                                    action="{{ route('pengadaan.destroy', $pengadaan->idpengadaan ?? ($pengadaan->id ?? '')) }}"
-                                                    method="POST" class="d-inline"
-                                                    onsubmit="return confirm('Hapus pengadaan ini?');">
-                                                    @csrf
-                                                    @method('DELETE')
-                                                    <button
-                                                        class="btn btn-sm btn-danger">Delete</button>
-                                                </form>
-                                            </td>
-                                        </tr>
-                                    @empty
-                                        <tr>
-                                            <td colspan="10" class="text-center py-4">No
-                                                pengadaan found</td>
-                                        </tr>
-                                    @endforelse
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-
+            <div class="col-md-4">
+                <label class="form-label">Vendor</label>
+                <select name="idvendor" class="form-select form-select-sm">
+                    <option value="">-- Pilih Vendor --</option>
+                    @foreach ($vendors as $v)
+                        <option value="{{ $v->idvendor }}">
+                            {{ $v->nama_vendor ?? 'Vendor ' . $v->idvendor }}
+                        </option>
+                    @endforeach
+                </select>
             </div>
 
+            <div class="col-md-2">
+                <label class="form-label">Barang</label>
+                <select name="idbarang" id="idbarang" class="form-select form-select-sm">
+                    <option value="">-- Pilih Barang --</option>
+                    @foreach ($barangs as $b)
+                        <option value="{{ $b->idbarang }}" data-harga="{{ $b->harga }}">
+                            {{ $b->nama }}
+                        </option>
+                    @endforeach
+                </select>
+            </div>
+
+            <div class="col-md-2">
+                <label class="form-label">Jumlah</label>
+                <input inputmode="numeric" name="jumlah" id="jumlah" class="form-control form-control-sm text-end">
+            </div>
+
+            <div class="col-md-2">
+                <label class="form-label">Status</label>
+                <select name="status" class="form-select form-select-sm">
+                    <option value="pengajuan">Pengajuan</option>
+                    <option value="in_process">On Going</option>
+                    <option value="sebagian">Sebagian</option>
+                    <option value="selesai">Selesai</option>
+                    <option value="batal">Batal</option>
+                </select>
+            </div>
+
+            <div class="col-md-2">
+                <label class="form-label">User</label>
+                <div class="form-control form-control-sm">
+                    {{ auth()->user()->username }}
+                </div>
+                <input type="hidden" name="iduser" value="{{ auth()->id() }}">
+            </div>
+
+            <div class="col-12 text-end">
+                <button type="submit" class="btn btn-primary btn-sm mt-2">Add Pengadaan</button>
+            </div>
+
+            <!-- Preview -->
+            <div class="col-12 mt-3">
+                <div class="row g-2">
+                    <div class="col-md-3">
+                        <label class="small text-muted">Prediksi Subtotal</label>
+                        <div id="pred_subtotal" class="form-control form-control-sm">-</div>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="small text-muted">Prediksi PPN ({{ config('app.ppn_percent', 11) }}%)</label>
+                        <div id="pred_ppn" class="form-control form-control-sm">-</div>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="small text-muted">Prediksi Total</label>
+                        <div id="pred_total" class="form-control form-control-sm">-</div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+@if (session()->has('success'))
+    <div class="alert alert-success">{{ session('success') }}</div>
+@endif
+
+<!-- Table -->
+<div class="card">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-striped table-hover mb-0">
+                <thead>
+                    <tr>
+                        <th>No</th>
+                        <th>ID</th>
+                        <th class="text-center">Tanggal</th>
+                        <th>Supplier</th>
+                        <th class="text-end">Subtotal</th>
+                        <th class="text-end">PPN</th>
+                        <th class="text-end">Total</th>
+                        <th>Status</th>
+                        <th>User</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @forelse($pengadaans as $p)
+                        <tr>
+                            <td>{{ $loop->iteration }}</td>
+                            <td>{{ $p->idpengadaan }}</td>
+                            <td class="text-center">{{ \Carbon\Carbon::parse($p->created_at)->format('d M Y') }}</td>
+                            <td>{{ $p->nama_vendor }}</td>
+                            <td class="text-end">{{ number_format($p->subtotal_nilai, 0, ',', '.') }}</td>
+                            <td class="text-end">{{ number_format($p->ppn, 0, ',', '.') }}%</td>
+                            <td class="text-end">{{ number_format($p->total_nilai, 0, ',', '.') }}</td>
+                            <td><span class="badge bg-primary">{{ $p->status }}</span></td>
+                            <td>{{ $p->username }}</td>
+                            <td>
+                                <a href="{{ url('/manage_pengadaan/'.$p->idpengadaan.'/edit') }}" class="btn btn-warning btn-sm">Edit</a>
+                                <a href="{{ url('/detail_pengadaan/'.$p->idpengadaan) }}" class="btn btn-info btn-sm">View</a>
+
+                                <form action="{{ route('pengadaan.destroy', $p->idpengadaan) }}" method="POST" class="d-inline">
+                                    @csrf @method('DELETE')
+                                    <button class="btn btn-danger btn-sm" onclick="return confirm('Hapus?')">Delete</button>
+                                </form>
+                            </td>
+                        </tr>
+                    @empty
+                        <tr><td colspan="10" class="text-center py-3">No Data</td></tr>
+                    @endforelse
+                </tbody>
+            </table>
         </div>
-    </main>
-</body>
+    </div>
+</div>
+
+@endsection
+
+
+@section('scripts')
 <script>
-    // Prediction script: compute subtotal, ppn and total from selected barang and jumlah
-    (function() {
-        function numberFormat(n) {
-            return new Intl.NumberFormat('id-ID').format(n);
-        }
+function numberFormat(n) {
+    return new Intl.NumberFormat('id-ID').format(n);
+}
 
-        const barangSelect = document.getElementById('idbarang');
-        const jumlahInput = document.getElementById('jumlah');
-        const totalInput = document.getElementById('total_nilai');
-        const predSubtotal = document.getElementById('pred_subtotal');
-        const predPpn = document.getElementById('pred_ppn');
-        const predTotal = document.getElementById('pred_total');
-        const ppnPercent = parseFloat('{{ config('app.ppn_percent', 11) }}');
+const barangSelect = document.getElementById('idbarang');
+const jumlahInput  = document.getElementById('jumlah');
+const predSubtotal = document.getElementById('pred_subtotal');
+const predPpn      = document.getElementById('pred_ppn');
+const predTotal    = document.getElementById('pred_total');
+const ppnPercent   = {{ config('app.ppn_percent', 11) }};
 
-        if (!barangSelect || !jumlahInput) return;
+function compute() {
+    const harga = barangSelect.options[barangSelect.selectedIndex]?.dataset.harga || 0;
+    const jumlah = parseFloat(jumlahInput.value) || 0;
 
-        function getSelectedHarga() {
-            const opt = barangSelect.options[barangSelect.selectedIndex];
-            if (!opt) return 0;
-            const h = opt.getAttribute('data-harga');
-            return h ? parseFloat(h) : 0;
-        }
+    const subtotal = harga * jumlah;
+    const ppn = subtotal * (ppnPercent / 100);
+    const total = subtotal + ppn;
 
-        function computeAndShow() {
-            const harga = getSelectedHarga();
-            const jumlah = parseFloat((jumlahInput.value || '0').toString().replace(
-                /[^0-9.-]+/g, '')) || 0;
-            const subtotal = Math.round(harga * jumlah);
-            const ppn = Math.round(subtotal * (ppnPercent / 100));
-            const total = subtotal + ppn;
+    predSubtotal.textContent = subtotal ? numberFormat(subtotal) : '-';
+    predPpn.textContent      = ppn ? numberFormat(ppn) : '-';
+    predTotal.textContent    = total ? numberFormat(total) : '-';
+}
 
-            // show preview formatted
-            predSubtotal.textContent = subtotal ? numberFormat(subtotal) : '-';
-            predPpn.textContent = ppn ? numberFormat(ppn) + ' (' + ppnPercent + '%)' : '-';
-            predTotal.textContent = total ? numberFormat(total) : '-';
-
-            // put raw total into the form input (server expects a plain number)
-            if (totalInput) {
-                totalInput.value = total;
-            }
-        }
-
-        barangSelect.addEventListener('change', computeAndShow);
-        jumlahInput.addEventListener('input', computeAndShow);
-
-        // initialize on load
-        document.addEventListener('DOMContentLoaded', computeAndShow);
-    })();
+barangSelect.addEventListener('change', compute);
+jumlahInput.addEventListener('input', compute);
 </script>
+@endsection

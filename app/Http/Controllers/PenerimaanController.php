@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Penerimaan;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 
 use App\Models\User;
 
@@ -12,38 +13,52 @@ class PenerimaanController extends Controller
 {
     public function index(Request $request)
     {
-        $penerimaans = DB::table('pengadaan_penerimaan')->get();
+        $penerimaans = DB::table('pengadaan_penerimaan')
+        ->orderBy('idpenerimaan', 'Asc')
+        ->get();
 
         // also provide pengadaan list and users for the add penerimaan form
-        $pengadaans = DB::select('SELECT * FROM Pengadaan_barang order BY idpengadaan');
-        $users = User::all();
+        $pengadaans = DB::select('SELECT * FROM Pengadaan_barang order BY idpengadaan')
+        ;
 
-        return view('penerimaan.manage_penerimaan', compact('penerimaans', 'pengadaans', 'users'));
+        $barangs = DB::table('barang_aktif')->get();
+
+        return view('penerimaan.manage_penerimaan', compact('penerimaans', 'pengadaans', 'barangs'));
     }
 
     public function store(Request $request)
     {
         $data = $request->validate([
-            'idpengadaan' => 'required|integer',
+            'idpengadaan' => 'required|integer|exists:pengadaan,idpengadaan',
+            'idbarang' => 'required|integer|exists:barang,idbarang',
+            'jumlah_terima' => 'required|integer|min:1',
             'tgl_penerimaan' => 'nullable|date',
-            'status_penerimaan' => 'nullable|in:0,1',
-            'iduser' => 'required|integer',
+            'status_penerimaan' => 'nullable|string|in:P,O,S,B',
         ]);
 
-        // get total_nilai from pengadaan if available
-        $pengadaan = DB::table('pengadaan')->where('idpengadaan', $data['idpengadaan'])->first();
-        $total_nilai = $pengadaan->total_nilai ?? 0;
+        $idpengadaan = $data['idpengadaan'];
+        $idbarang = $data['idbarang'];
+        $jumlah_terima = $data['jumlah_terima'];
+        $status = $data['status_penerimaan'] ?? 'P';
 
-        DB::insert("INSERT INTO penerimaan (idpengadaan, tgl_penerimaan, total_nilai, status_penerimaan, iduser, created_at)
-            VALUES (?, ?, ?, ?, ?, ?)", [
-            $data['idpengadaan'],
-            $data['tgl_penerimaan'] ?? now(),
-            $total_nilai,
-            $data['status_penerimaan'] ?? 0,
-            $data['iduser'],
-            now(),
-        ]);
+        // prefer server-side authenticated user id instead of trusting client input
+        $iduser = Auth::id() ?? $request->input('iduser');
 
-        return redirect('/manage_penerimaan')->with('success', 'Penerimaan berhasil ditambahkan.');
+        try {
+            // Stored procedure signature expects: p_idpengadaan, p_idbarang, p_jumlah_terima, p_iduser, p_status
+            DB::select("CALL Tambah_penerimaan(?, ?, ?, ?, ?)", [
+                $idpengadaan,
+                $idbarang,
+                $jumlah_terima,
+                $iduser,
+                $status,
+            ]);
+
+            return redirect('/manage_penerimaan')->with('success', 'Penerimaan berhasil ditambahkan.');
+        } catch (\Exception $e) {
+            // log error and show friendly message
+            logger()->error('Tambah_penerimaan failed: ' . $e->getMessage());
+            return redirect()->back()->withInput()->with('error', 'Gagal menambah penerimaan: ' . $e->getMessage());
+        }
     }
 }

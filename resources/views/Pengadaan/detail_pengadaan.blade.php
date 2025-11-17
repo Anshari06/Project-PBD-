@@ -101,13 +101,39 @@
                                     readonly>
                             </div>
 
-                            <div class="col-md-3">
+                            <div class="col-md-2">
                                 <label class="form-label small text-muted">Status</label>
-                                <input type="text"
-                                    class="form-control form-control-sm text-center"
-                                    value="{{ ($pengadaan->status ?? '0') == '1' ? 'Selesai' : 'Proses' }}"
-                                    readonly>
+                                    @php
+                                    $status = $pengadaan->status ?? '';
+
+                                    switch ($status) {
+                                        case 'P':
+                                            $cls = 'badge bg-primary';
+                                            $lbl = 'In Process';
+                                            break;
+                                        case 'O':
+                                            $cls = 'badge bg-warning text-dark';
+                                            $lbl = 'Sebagian';
+                                            break;
+                                        case 'S':
+                                            $cls = 'badge bg-success';
+                                            $lbl = 'Selesai';
+                                            break;
+                                        case 'B':
+                                            $cls = 'badge bg-danger';
+                                            $lbl = 'Batal';
+                                            break;
+                                        default:
+                                            $cls = 'badge bg-secondary';
+                                            $lbl = 'Unknown';
+                                            break;
+                                    }
+                                @endphp
+                                <div class="">
+                                    <span class="form-control form-control-sm text-center align-center{{ $cls }}">{{ $lbl }}</span>
+                                </div>
                             </div>
+
                         </div>
                     </div>
                 </form>

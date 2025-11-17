@@ -36,6 +36,22 @@
                     </select>
                 </div>
 
+                <input type="hidden" name="iduser" value="{{ auth()->user()->id }}">
+
+                <div class="col-md-4">
+                    <label for="idbarang" class="form-label">Pilih Barang</label>
+                    <select name="idbarang" id="idbarang" class="form-select form-select-sm">
+                        @foreach ($barangs as $b)
+                            <option value="{{ $b->idbarang }}">{{ $b->nama }}</option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <div class="col-md-3">
+                    <label for="jumlah_terima" class="form-label">Jumlah Terima</label>
+                    <input type="numeric" name="jumlah_terima" class="form-control form-control-sm">
+                </div>
+
                 <div class="col-md-3">
                     <label for="tgl_penerimaan" class="form-label">Tanggal Penerimaan</label>
                     <input type="date" name="tgl_penerimaan" id="tgl_penerimaan"
@@ -47,8 +63,10 @@
                     <label for="status_penerimaan" class="form-label">Status</label>
                     <select name="status_penerimaan" id="status_penerimaan"
                         class="form-select form-select-sm">
-                        <option value="0">Proses</option>
-                        <option value="1">Selesai</option>
+                        <option value="P">Proses</option>
+                        <option value="O">Sebagian</option>
+                        <option value="S">Selesai</option>
+                        <option value="B">Batal</option>
                     </select>
                 </div>
 
@@ -57,7 +75,7 @@
                 </div>
 
                 {{-- Prediction preview (uses selected pengadaan total) --}}
-                <div class="col-12 mt-2">
+                {{-- <div class="col-12 mt-2">
                     <div class="row g-2">
                         <div class="col-md-3">
                             <label class="form-label small text-muted">Prediksi Subtotal</label>
@@ -78,7 +96,7 @@
                                 klik Add untuk menyimpan.</div>
                         </div>
                     </div>
-                </div>
+                </div> --}}
 
                 <div class="row">
                     @if (session('success'))
@@ -128,8 +146,34 @@
                                     {{ isset($penerimaan->total_nilai) ? number_format($penerimaan->total_nilai, 0, ',', '.') : '-' }}
                                 </td>
                                 <td>
-                                    <span
-                                        class="badge {{ ($penerimaan->status_penerimaan ?? ($penerimaan->status ?? '0')) == '1' ? 'bg-success' : 'bg-secondary' }}">{{ ($penerimaan->status_penerimaan ?? ($penerimaan->status ?? '0')) == '1' ? 'Selesai' : 'Proses' }}</span>
+                                    @php
+                                        $st =
+                                            $penerimaan->status_penerimaan ??
+                                            ($penerimaan->status ?? 'pengajuan');
+                                        switch ($st) {
+                                            case 'P':
+                                                $cls = 'bg-primary';
+                                                $lbl = 'In Process';
+                                                break;
+                                            case 'O':
+                                                $cls = 'bg-warning text-dark';
+                                                $lbl = 'Sebagian';
+                                                break;
+                                            case 'S':
+                                                $cls = 'bg-success';
+                                                $lbl = 'Selesai';
+                                                break;
+                                            case 'B':
+                                                $cls = 'bg-danger';
+                                                $lbl = 'Batal';
+                                                break;
+                                            default:
+                                                $cls = 'bg-secondary';
+                                                $lbl = $st;
+                                                break;
+                                        }
+                                    @endphp
+                                    <span class="badge {{ $cls }}">{{ $lbl }}</span>
                                 </td>
                                 <td>{{ $penerimaan->username ?? ($penerimaan->user->username ?? '-') }}
                                 </td>

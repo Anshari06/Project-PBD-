@@ -26,29 +26,40 @@ class PengadaanController extends Controller
 
     public function store(Request $request)
     {
-        DB::insert("
-            INSERT INTO pengadaan (idvendor, iduser, status, total_nilai, subtotal_nilai)
-                VALUES (?, ?, ?, 0, 0)", [
-            $request->input('idvendor'),
-            Auth::id(),
-            $request->input('status'),
-        ]);
+        // create pengadaan header
+        DB::insert(
+            "INSERT INTO pengadaan (idvendor, iduser, status, total_nilai, subtotal_nilai) VALUES (?, ?, ?, 0, 0)",
+            [
+                $request->input('idvendor'),
+                Auth::id(),
+                $request->input('status'),
+            ]
+        );
 
         $idpengadaan = DB::getPdo()->lastInsertId();
 
-        DB::insert(
-            "
-            INSERT INTO detail_pengadaan (idbarang, harga_satuan, jumlah, sub_total, idpengadaan)
-                VALUES (?, (SELECT harga from barang where idbarang=?) , ?, hitung_subtotal(?, (SELECT harga from barang where idbarang=?)), ?)",
-            [
-                $request->input('idbarang'),
-                $request->input('idbarang'),
-                $request->input('jumlah'),
-                $request->input('jumlah'),
-                $request->input('idbarang'),
-                $idpengadaan,
-            ]
-        );
+        // insert multiple detail_pengadaan rows from arrays
+        $idbarangs = $request->input('idbarang', []);
+        $jumlahs = $request->input('jumlah', []);
+
+        foreach ($idbarangs as $i => $idb) {
+            $jumlah = isset($jumlahs[$i]) ? intval($jumlahs[$i]) : 0;
+            if (empty($idb) || $jumlah <= 0) {
+                continue; // skip empty rows
+            }
+
+            DB::insert(
+                "INSERT INTO detail_pengadaan (idbarang, harga_satuan, jumlah, sub_total, idpengadaan) VALUES (?, (SELECT harga FROM barang WHERE idbarang = ?), ?, hitung_subtotal(?, (SELECT harga FROM barang WHERE idbarang = ?)), ?)",
+                [
+                    $idb,
+                    $idb,
+                    $jumlah,
+                    $jumlah,
+                    $idb,
+                    $idpengadaan,
+                ]
+            );
+        }
 
         DB::update(
             "

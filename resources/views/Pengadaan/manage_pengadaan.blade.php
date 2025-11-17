@@ -33,32 +33,58 @@
                     </select>
                 </div>
 
-                <div class="col-md-2">
-                    <label class="form-label">Barang</label>
-                    <select name="idbarang" id="idbarang" class="form-select form-select-sm">
-                        <option value="">-- Pilih Barang --</option>
-                        @foreach ($barangs as $b)
-                            <option value="{{ $b->idbarang }}" data-harga="{{ $b->harga }}">
-                                {{ $b->nama }}
-                            </option>
-                        @endforeach
-                    </select>
-                </div>
-
-                <div class="col-md-2">
-                    <label class="form-label">Jumlah</label>
-                    <input inputmode="numeric" name="jumlah" id="jumlah"
-                        class="form-control form-control-sm text-end">
+                <div class="col-12">
+                    <label class="form-label">Items</label>
+                    <table class="table table-sm mb-0" id="items_table">
+                        <thead>
+                            <tr>
+                                <th style="width:60%">Barang</th>
+                                <th style="width:20%">Jumlah</th>
+                                <th style="width:20%"> </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="item-row">
+                                <td>
+                                    <select name="idbarang[]"
+                                        class="form-select form-select-sm idbarang">
+                                        <option value="">-- Pilih Barang --</option>
+                                        @foreach ($barangs as $b)
+                                            <option value="{{ $b->idbarang }}"
+                                                data-harga="{{ $b->harga }}">{{ $b->nama }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </td>
+                                <td>
+                                    <input name="jumlah[]"
+                                        class="form-control form-control-sm jumlah text-end"
+                                        inputmode="numeric">
+                                </td>
+                                <td>
+                                    <button type="button"
+                                        class="btn btn-sm btn-danger remove-row">Remove</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <td colspan="3">
+                                    <button type="button" id="add_row"
+                                        class="btn btn-sm btn-secondary">Tambah Item</button>
+                                </td>
+                            </tr>
+                        </tfoot>
+                    </table>
                 </div>
 
                 <div class="col-md-2">
                     <label class="form-label">Status</label>
                     <select name="status" class="form-select form-select-sm">
-                        <option value="pengajuan">Pengajuan</option>
-                        <option value="in_process">On Going</option>
-                        <option value="sebagian">Sebagian</option>
-                        <option value="selesai">Selesai</option>
-                        <option value="batal">Batal</option>
+                        <option value="P">Proses</option>
+                        <option value="O">Sebagian</option>
+                        <option value="S">Selesai</option>
+                        <option value="B">Batal</option>
                     </select>
                 </div>
 
@@ -136,23 +162,19 @@
                                     @php
                                         $st = $p->status ?? 'pengajuan';
                                         switch ($st) {
-                                            case 'pengajuan':
-                                                $cls = 'bg-secondary';
-                                                $lbl = 'Pengajuan';
-                                                break;
-                                            case 'in_process':
+                                            case 'P':
                                                 $cls = 'bg-primary';
                                                 $lbl = 'In Process';
                                                 break;
-                                            case 'sebagian':
+                                            case 'O':
                                                 $cls = 'bg-warning text-dark';
                                                 $lbl = 'Sebagian';
                                                 break;
-                                            case 'selesai':
+                                            case 'S':
                                                 $cls = 'bg-success';
                                                 $lbl = 'Selesai';
                                                 break;
-                                            case 'batal':
+                                            case 'B':
                                                 $cls = 'bg-danger';
                                                 $lbl = 'Batal';
                                                 break;
@@ -194,31 +216,70 @@
 
 @section('scripts')
     <script>
-        function numberFormat(n) {
-            return new Intl.NumberFormat('id-ID').format(n);
-        }
+        (function() {
+            function numberFormat(n) {
+                return new Intl.NumberFormat('id-ID').format(n);
+            }
 
-        const barangSelect = document.getElementById('idbarang');
-        const jumlahInput = document.getElementById('jumlah');
-        const predSubtotal = document.getElementById('pred_subtotal');
-        const predPpn = document.getElementById('pred_ppn');
-        const predTotal = document.getElementById('pred_total');
-        const ppnPercent = {{ config('app.ppn_percent', 11) }};
+            const ppnPercent = {{ config('app.ppn_percent', 11) }};
+            const table = document.getElementById('items_table');
+            const predSubtotal = document.getElementById('pred_subtotal');
+            const predPpn = document.getElementById('pred_ppn');
+            const predTotal = document.getElementById('pred_total');
 
-        function compute() {
-            const harga = barangSelect.options[barangSelect.selectedIndex]?.dataset.harga || 0;
-            const jumlah = parseFloat(jumlahInput.value) || 0;
+            function computeAll() {
+                let subtotal = 0;
+                document.querySelectorAll('#items_table tbody tr').forEach(function(row) {
+                    const select = row.querySelector('.idbarang');
+                    const jumlahEl = row.querySelector('.jumlah');
+                    const harga = parseFloat(select?.selectedOptions[0]?.dataset?.harga ||
+                        0) || 0;
+                    const jumlah = parseFloat(jumlahEl?.value || 0) || 0;
+                    subtotal += harga * jumlah;
+                });
+                const ppn = Math.round(subtotal * (ppnPercent / 100));
+                const total = Math.round(subtotal + ppn);
 
-            const subtotal = harga * jumlah;
-            const ppn = subtotal * (ppnPercent / 100);
-            const total = subtotal + ppn;
+                predSubtotal.textContent = subtotal ? numberFormat(subtotal) : '-';
+                predPpn.textContent = ppn ? numberFormat(ppn) : '-';
+                predTotal.textContent = total ? numberFormat(total) : '-';
+            }
 
-            predSubtotal.textContent = subtotal ? numberFormat(subtotal) : '-';
-            predPpn.textContent = ppn ? numberFormat(ppn) : '-';
-            predTotal.textContent = total ? numberFormat(total) : '-';
-        }
+            // add/remove row handlers
+            document.getElementById('add_row').addEventListener('click', function() {
+                const tbody = table.querySelector('tbody');
+                const newRow = tbody.querySelector('tr.item-row').cloneNode(true);
+                newRow.querySelectorAll('select, input').forEach(function(el) {
+                    if (el.tagName === 'INPUT') el.value = '';
+                    if (el.tagName === 'SELECT') el.selectedIndex = 0;
+                });
+                tbody.appendChild(newRow);
+                attachRowEvents(newRow);
+            });
 
-        barangSelect.addEventListener('change', compute);
-        jumlahInput.addEventListener('input', compute);
+            function attachRowEvents(row) {
+                const select = row.querySelector('.idbarang');
+                const jumlah = row.querySelector('.jumlah');
+                const remove = row.querySelector('.remove-row');
+
+                if (select) select.addEventListener('change', computeAll);
+                if (jumlah) jumlah.addEventListener('input', computeAll);
+                if (remove) remove.addEventListener('click', function() {
+                    const tbody = table.querySelector('tbody');
+                    if (tbody.querySelectorAll('tr').length > 1) {
+                        row.remove();
+                        computeAll();
+                    } else {
+                        // clear fields if only one row
+                        select.selectedIndex = 0;
+                        jumlah.value = '';
+                        computeAll();
+                    }
+                });
+            }
+
+            // attach to initial row
+            attachRowEvents(table.querySelector('tbody tr'));
+        })();
     </script>
 @endsection

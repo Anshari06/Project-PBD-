@@ -16,6 +16,13 @@
         body {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
+            background-attachment: fixed;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            
         }
 
         .card {
@@ -82,20 +89,29 @@
                         <h3 class="mb-4 text-center login-title">Login</h3>
                         <form action="/login" method="POST">
                             @csrf
-                            @if (session('error'))
+
+                            {{-- Global login error --}}
+                            @if ($errors->has('login'))
                                 <div class="alert alert-danger">
-                                    {{ session('error') }}
+                                    {{ $errors->first('login') }}
                                 </div>
                             @endif
+
                             <div class="mb-3">
                                 <label for="username" class="form-label">username</label>
-                                <input type="text" name="username" class="form-control" id="username"
-                                    placeholder="username">
+                                <input type="text" name="username" class="form-control"
+                                    id="username" placeholder="username">
+                                @error('username')
+                                    <div class="text-danger small">{{ $message }}</div>
+                                @enderror
                             </div>
                             <div class="mb-3">
                                 <label for="password" class="form-label">Password</label>
-                                <input type="password" name="password" class="form-control" id="password"
-                                    placeholder="Password">
+                                <input type="password" name="password" class="form-control"
+                                    id="password" placeholder="Password">
+                                @error('password')
+                                    <div class="text-danger small">{{ $message }}</div>
+                                @enderror
                             </div>
                             <button type="submit" class="btn btn-primary w-100">Sign in</button>
                         </form>

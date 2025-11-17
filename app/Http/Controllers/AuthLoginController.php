@@ -31,7 +31,7 @@ class AuthLoginController extends Controller
 
         // Authentication failed, redirect back with error
         return back()->withErrors([
-            'email' => 'The provided credentials do not match our records.',
+            'login' => 'Username atau password salah.',
         ])->withInput();
     }
 

@@ -18,8 +18,10 @@ class PenerimaanController extends Controller
         ->get();
 
         // also provide pengadaan list and users for the add penerimaan form
-        $pengadaans = DB::select('SELECT * FROM Pengadaan_barang order BY idpengadaan')
-        ;
+        $pengadaans = DB::table('pengadaan_barang')
+            ->where('status', '!=', 'S')
+            ->orderBy('idpengadaan')
+            ->get();
 
         $barangs = DB::table('barang_aktif')->get();
 

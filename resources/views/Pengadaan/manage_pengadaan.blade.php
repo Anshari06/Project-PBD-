@@ -164,11 +164,11 @@
                                         switch ($st) {
                                             case 'P':
                                                 $cls = 'bg-primary';
-                                                $lbl = 'In Process';
+                                                $lbl = 'Pending';
                                                 break;
                                             case 'O':
                                                 $cls = 'bg-warning text-dark';
-                                                $lbl = 'Sebagian';
+                                                $lbl = 'On-Progress';
                                                 break;
                                             case 'S':
                                                 $cls = 'bg-success';

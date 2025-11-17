@@ -33,18 +33,18 @@
                 <form class="card mb-3">
                     <div class="card-body">
                         <div class="row g-3">
-                            <div class="col-md-3">
+                            <div class="col-md-2">
                                 <label class="form-label small text-muted">ID Pengadaan</label>
                                 <input type="text" class="form-control form-control-sm"
                                     value="{{ $pengadaan->idpengadaan ?? ($pengadaan->id ?? '-') }}"
                                     readonly>
                             </div>
 
-                            <div class="col-md-3">
+                            <div class="col-md-4">
                                 <label class="form-label small text-muted">Tanggal</label>
                                 <input type="text"
                                     class="form-control form-control-sm text-center"
-                                    value="{{ isset($pengadaan->tgl_pengadaan) ? \Carbon\Carbon::parse($pengadaan->tgl_pengadaan)->format('d M Y H:i') : $pengadaan->created_at ?? '-' }}"
+                                    value="{{ \Carbon\Carbon::parse($pengadaan->created_at)->format('d M Y H:i') . $pengadaan->created_at ?? '-' }}"
                                     readonly>
                             </div>
 
@@ -66,75 +66,117 @@
                         </div>
 
                         <hr>
+                        @foreach ($detailPengadaan as $detail)
+                            <div class="card mb-3">
+                                <div class="card-body">
+                                    <h6 class="text-muted">Detail Barang {{ $loop->iteration }}</h6>
+                                    <div class="row g-3">
 
-                        <div class="row g-3">
-                            <div class="col-md-3">
-                                <label class="form-label small text-muted">Harga Satuan</label>
-                                <input type="text" class="form-control form-control-sm text-end"
-                                    value="{{ isset($pengadaan->harga_satuan) ? number_format($pengadaan->harga_satuan, 0, ',', '.') : '-' }}"
-                                    readonly>
-                            </div>
-                            <div class="col-md-3">
-                                <label class="form-label small text-muted">Jumlah</label>
-                                <input type="text" class="form-control form-control-sm text-end"
-                                    value="{{ isset($pengadaan->jumlah) ? number_format($pengadaan->jumlah, 0, ',', '.') : $pengadaan->jumlah ?? '-' }}"
-                                    readonly>
-                            </div>
-                            <div class="col-md-3">
-                                <label class="form-label small text-muted">Subtotal</label>
-                                <input type="text" class="form-control form-control-sm"
-                                    value="{{ isset($pengadaan->subtotal_nilai) ? number_format($pengadaan->subtotal_nilai, 0, ',', '.') : '-' }}"
-                                    readonly>
-                            </div>
-                            <div class="col-md-3">
-                                <label class="form-label small text-muted">Total Nilai</label>
-                                <input type="text" class="form-control form-control-sm"
-                                    value="{{ isset($pengadaan->total_nilai) ? number_format($pengadaan->total_nilai, 0, ',', '.') : '-' }}"
-                                    readonly>
-                            </div>
+                                        <div class="col-md-3">
+                                            <label class="form-label small text-muted">Harga
+                                                Satuan</label>
+                                            <input type="text"
+                                                class="form-control form-control-sm text-end"
+                                                value="{{ number_format($detail->harga_satuan, 0, ',', '.') }}"
+                                                readonly>
+                                        </div>
 
-                            <div class="col-md-3">
-                                <label class="form-label small text-muted">PPN
-                                    ({{ config('app.ppn_percent', 11) }}%)</label>
-                                <input type="text" class="form-control form-control-sm"
-                                    value="{{ isset($pengadaan->ppn) ? number_format($pengadaan->ppn, 0, ',', '.') : '-' }}"
-                                    readonly>
-                            </div>
+                                        <div class="col-md-3">
+                                            <label
+                                                class="form-label small text-muted">Jumlah</label>
+                                            <input type="text"
+                                                class="form-control form-control-sm text-end"
+                                                value="{{ number_format($detail->jumlah, 0, ',', '.') }}"
+                                                readonly>
+                                        </div>
 
-                            <div class="col-md-2">
-                                <label class="form-label small text-muted">Status</label>
-                                    @php
-                                    $status = $pengadaan->status ?? '';
+                                        <div class="col-md-3">
+                                            <label
+                                                class="form-label small text-muted">Subtotal</label>
+                                            <input type="text"
+                                                class="form-control form-control-sm"
+                                                value="{{ number_format($detail->subtotal_nilai, 0, ',', '.') }}"
+                                                readonly>
+                                        </div>
 
-                                    switch ($status) {
-                                        case 'P':
-                                            $cls = 'badge bg-primary';
-                                            $lbl = 'In Process';
-                                            break;
-                                        case 'O':
-                                            $cls = 'badge bg-warning text-dark';
-                                            $lbl = 'Sebagian';
-                                            break;
-                                        case 'S':
-                                            $cls = 'badge bg-success';
-                                            $lbl = 'Selesai';
-                                            break;
-                                        case 'B':
-                                            $cls = 'badge bg-danger';
-                                            $lbl = 'Batal';
-                                            break;
-                                        default:
-                                            $cls = 'badge bg-secondary';
-                                            $lbl = 'Unknown';
-                                            break;
-                                    }
-                                @endphp
-                                <div class="">
-                                    <span class="form-control form-control-sm text-center align-center{{ $cls }}">{{ $lbl }}</span>
+                                        <div class="col-md-3">
+                                            <label class="form-label small text-muted">PPN
+                                                ({{ config('app.ppn_percent', 11) }}%)
+                                            </label>
+                                            <input type="text"
+                                                class="form-control form-control-sm"
+                                                value="{{ config('app.ppn_percent', 11) }}%"
+                                                readonly>
+                                        </div>
+
+                                        <div class="col-md-3">
+                                            <label class="form-label small text-muted">Total
+                                                Nilai</label>
+                                            <input type="text"
+                                                class="form-control form-control-sm"
+                                                value="{{ number_format($detail->total_nilai, 0, ',', '.') }}"
+                                                readonly>
+                                        </div>
+
+                                        <div class="col-md-3">
+                                            <label
+                                                class="form-label small text-muted">Status</label>
+
+                                            @php
+                                                $status = $detail->status ?? '';
+                                                switch ($status) {
+                                                    case 'P':
+                                                        $cls = 'badge bg-primary';
+                                                        $lbl = 'Pending';
+                                                        break;
+                                                    case 'O':
+                                                        $cls = 'badge bg-warning text-dark';
+                                                        $lbl = 'On-Progress';
+                                                        break;
+                                                    case 'S':
+                                                        $cls = 'badge bg-success';
+                                                        $lbl = 'Complete';
+                                                        break;
+                                                    case 'B':
+                                                        $cls = 'badge bg-danger';
+                                                        $lbl = 'Batal';
+                                                        break;
+                                                    default:
+                                                        $cls = 'badge bg-secondary';
+                                                        $lbl = $status ?: '-';
+                                                        break;
+                                                }
+                                            @endphp
+
+                                            <div >
+                                                <span
+                                                    class="form-control form-control-sm text-center text-white {{ $cls }}">{{ $lbl }}
+                                                </span>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-2">
+                                            <label class="form-label small text-muted">Total
+                                                Diterima</label>
+                                            <input type="text"
+                                                class="form-control form-control-sm bg-success text-white"
+                                                value="{{ number_format($detail->total_diterima, 0, ',', '.') }}"
+                                                readonly>
+                                        </div>
+
+                                        <div class="col-md-2">
+                                            <label class="form-label small text-muted">Sisa</label>
+                                            <input type="text"
+                                                class="form-control form-control-sm bg-danger text-white"
+                                                value="{{ number_format($detail->sisa_terima, 0, ',', '.') }}"
+                                                readonly>
+                                        </div>
+
+                                    </div>
                                 </div>
                             </div>
+                        @endforeach
 
-                        </div>
                     </div>
                 </form>
 
@@ -153,7 +195,7 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @forelse($detailPengadaans ?? [] as $d)
+                                    @forelse($detailbarang ?? [] as $d)
                                         <tr>
                                             <td>{{ $loop->iteration }}</td>
                                             <td>

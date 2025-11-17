@@ -83,10 +83,15 @@ class PengadaanController extends Controller
 
     public function show($id)
     {
-        $pengadaan = collect(DB::select('SELECT * FROM Detail_Pengadaan_VU WHERE idpengadaan = ?', [$id]))->first();
-        $detailPengadaans = DB::select('SELECT * FROM detpengadaan_barang WHERE idpengadaan = ?', [$id]);
+        $pengadaan = DB::table('Detail_Pengadaan_VU')
+            ->where('idpengadaan', $id)
+            ->first();
+        $detailPengadaan = DB::table('Detail_Pengadaan_VU')
+            ->where('idpengadaan', $id)
+            ->get();
+        $detailbarang = DB::select('SELECT * FROM detpengadaan_barang WHERE idpengadaan = ?', [$id]);
 
-        return view('Pengadaan.detail_pengadaan', compact('pengadaan', 'detailPengadaans'));
+        return view('Pengadaan.detail_pengadaan', compact('pengadaan', 'detailPengadaan', 'detailbarang'));
     }
 
     public function destroy($id)

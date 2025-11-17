@@ -63,10 +63,9 @@
                     <label for="status_penerimaan" class="form-label">Status</label>
                     <select name="status_penerimaan" id="status_penerimaan"
                         class="form-select form-select-sm">
-                        <option value="P">Proses</option>
-                        <option value="O">Sebagian</option>
+                        <option value="O">In Process</option>
+                        <option value="R">Return</option>
                         <option value="S">Selesai</option>
-                        <option value="B">Batal</option>
                     </select>
                 </div>
 
@@ -103,8 +102,6 @@
                         <div class="alert alert-success alert-dismissible fade show fs-sm"
                             role="alert">
                             {{ session('success') }}
-                            <button type="button" class="btn-close" data-bs-dismiss="alert"
-                                aria-label="Close"></button>
                         </div>
                     @endif
                 </div>
@@ -151,21 +148,17 @@
                                             $penerimaan->status_penerimaan ??
                                             ($penerimaan->status ?? 'pengajuan');
                                         switch ($st) {
-                                            case 'P':
-                                                $cls = 'bg-primary';
-                                                $lbl = 'In Process';
-                                                break;
                                             case 'O':
                                                 $cls = 'bg-warning text-dark';
-                                                $lbl = 'Sebagian';
+                                                $lbl = 'In Process';
                                                 break;
                                             case 'S':
                                                 $cls = 'bg-success';
                                                 $lbl = 'Selesai';
                                                 break;
-                                            case 'B':
+                                            case 'R':
                                                 $cls = 'bg-danger';
-                                                $lbl = 'Batal';
+                                                $lbl = 'Return';
                                                 break;
                                             default:
                                                 $cls = 'bg-secondary';

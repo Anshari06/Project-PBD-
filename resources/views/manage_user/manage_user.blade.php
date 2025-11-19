@@ -93,7 +93,7 @@
                                             <td>{{ $loop->iteration }}</td>
                                             <td>{{ $user->iduser }}</td>
                                             <td>{{ $user->username }}</td>
-                                            <td>{{ $user->password::hash }}</td>
+                                            <td>{{ Hash::check('password_yang_diduga', $user->password)}}</td>
                                             <td>{{ $user->nama_role ?? '-' }}</td>
                                             <td>
                                                 <a href="{{ url('/manage_user/' . $user->iduser . '/edit') }}"

@@ -15,6 +15,8 @@ class KartuStok extends Controller
             ->select('kartu_stok.*', 'barang.*')
             ->get();
 
+        // $beras = DB::table('barang')->where('nama_barang', 'like', '%beras%')->get();
+
         return view('kartu_stok.kartu_stok', compact('kartu_stoks'));
     }
 }

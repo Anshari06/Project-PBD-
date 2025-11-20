@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 // use App\Models\Barang;
-use App\Models\Pengadaan;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
@@ -14,7 +13,7 @@ class PengadaanController extends Controller
     public function index()
     {
         // eager-load user relation so we can access $pengadaan->user->username in the view
-        $pengadaans = DB::select('SELECT * FROM Pengadaan_barang order BY idpengadaan');
+        $pengadaans = DB::select('SELECT DISTINCT idpengadaan, created_at, nama_vendor, username, ppn, total_nilai, subtotal_nilai, status FROM Pengadaan_barang ORDER BY idpengadaan');
         $detailPengadaans = DB::select('SELECT * FROM Detail_Pengadaan_VU');
         $vendors = DB::table('vendor_aktif')->get();
         $users = User::all();
@@ -32,7 +31,7 @@ class PengadaanController extends Controller
             [
                 $request->input('idvendor'),
                 Auth::id(),
-                $request->input('status'),
+                'P',
             ]
         );
 
@@ -78,7 +77,7 @@ class PengadaanController extends Controller
             WHERE idpengadaan = ?", [$idpengadaan]);
 
 
-        return redirect()->route('pengadaan.manage_pengadaan')->with('success', 'Pengadaan berhasil ditambahkan.');
+        return redirect()->route('pengadaan.manage_pengadaan')->with('success', 'Pengadaan berhasil ditambahkan. BRUH LUU NOW FINEESHEEYT');
     }
 
     public function show($id)

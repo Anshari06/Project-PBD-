@@ -78,7 +78,7 @@
                     </table>
                 </div>
 
-                <div class="col-md-2">
+                {{-- <div class="col-md-2">
                     <label class="form-label">Status</label>
                     <select name="status" class="form-select form-select-sm">
                         <option value="P">Proses</option>
@@ -86,7 +86,7 @@
                         <option value="S">Selesai</option>
                         <option value="B">Batal</option>
                     </select>
-                </div>
+                </div> --}}
 
                 <div class="col-md-2">
                     <label class="form-label">User</label>

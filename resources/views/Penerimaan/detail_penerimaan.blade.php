@@ -35,89 +35,112 @@
                     <div class="d-flex justify-content-between align-items-center mb-2">
                         <div>
                             <h2 class="mb-0">Detail Penerimaan</h2>
-                            <p class="text-muted small mb-0">Manage detail of Penerimaan (incoming receipts).</p>
+                            <p class="text-muted small mb-0">Manage detail of Penerimaan (incoming
+                                receipts).</p>
                         </div>
                     </div>
                 </div>
 
                 {{-- back to penerimaan --}}
                 <div class="mb-3">
-                    <a href="{{ url('/manage_penerimaan') }}" class="btn btn-secondary btn-sm">Back to Penerimaan</a>
+                    <a href="{{ url('/manage_penerimaan') }}" class="btn btn-secondary btn-sm">Back
+                        to Penerimaan</a>
                 </div>
 
                 {{-- Penerimaan summary (if available) --}}
-                @if(isset($penerimaan))
+                @if (isset($penerimaan))
                     <div class="card mb-3">
                         <div class="card-body">
                             <div class="row">
-                                <div class="col-md-3"><strong>ID Penerimaan:</strong> {{ $penerimaan->idpenerimaan ?? ($penerimaan->id ?? '-') }}</div>
-                                <div class="col-md-3"><strong>Created At:</strong> {{ isset($penerimaan->created_at) ? \Carbon\Carbon::parse($penerimaan->created_at)->format('d M Y H:i') : (isset($penerimaan->tanggal) ? \Carbon\Carbon::parse($penerimaan->tanggal)->format('d M Y') : '-') }}</div>
-                                <div class="col-md-3"><strong>ID Pengadaan:</strong> {{ $penerimaan->idpengadaan ?? '-' }}</div>
+                                <div class="col-md-3"><strong>ID Penerimaan:</strong>
+                                    {{ $penerimaan->idpenerimaan ?? ($penerimaan->id ?? '-') }}
+                                </div>
+                                <div class="col-md-3"><strong>Created At:</strong>
+                                    {{ isset($penerimaan->created_at) ? \Carbon\Carbon::parse($penerimaan->created_at)->format('d M Y H:i') : (isset($penerimaan->tanggal) ? \Carbon\Carbon::parse($penerimaan->tanggal)->format('d M Y') : '-') }}
+                                </div>
+                                <div class="col-md-3"><strong>ID Pengadaan:</strong>
+                                    {{ $penerimaan->idpengadaan ?? '-' }}</div>
                                 <div class="col-md-3 text-end">
                                     <strong>Status:</strong>
                                     <div class="mt-1">
-                                        <span class="badge {{ ($penerimaan->status ?? '0') == '1' ? 'bg-success' : 'bg-secondary' }}">{{ ($penerimaan->status ?? '0') == '1' ? 'Selesai' : 'Proses' }}</span>
+                                        <span
+                                            class="badge {{ ($penerimaan->status ?? '0') == '1' ? 'bg-success' : 'bg-secondary' }}">{{ ($penerimaan->status ?? '0') == '1' ? 'Selesai' : 'Proses' }}</span>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 @endif
-
-                <!-- Detail Penerimaan Table -->
                 <div class="card">
-                    <div class="card-body p-0">
-                        <div class="table-responsive">
-                            <table class="table table-striped mb-0">
-                                <thead>
-                                    <tr>
-                                        <th style="width:60px">No</th>
-                                        <th style="width:120px">ID Detail</th>
-                                        <th>Barang</th>
-                                        <th style="width:140px" class="text-end">Harga Satuan</th>
-                                        <th style="width:100px" class="text-center">Jumlah</th>
-                                        <th style="width:140px" class="text-end">Subtotal</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @forelse($detailPenerimaans ?? [] as $detail)
-                                        <tr>
-                                            <td>{{ $loop->iteration }}</td>
-                                            <td>{{ $detail->iddetail_penerimaan ?? $detail->iddetail ?? $detail->id ?? '-' }}</td>
-                                            <td>{{ $detail->nama_barang ?? $detail->nama ?? $detail->barang_nama ?? '-' }}</td>
-                                            <td class="text-end">
-                                                @if(isset($detail->harga_satuan))
-                                                    {{ number_format($detail->harga_satuan,0,',','.') }}
-                                                @elseif(isset($detail->harga))
-                                                    {{ number_format($detail->harga,0,',','.') }}
-                                                @else
-                                                    -
-                                                @endif
-                                            </td>
-                                            <td class="text-center">{{ $detail->jumlah ?? $detail->qty ?? $detail->kuantitas ?? '-' }}</td>
-                                            <td class="text-end">
-                                                @php
-                                                    $subtotal = $detail->subtotal ?? ($detail->sub_total ?? null);
-                                                    if(!$subtotal) {
-                                                        if(isset($detail->harga_satuan,$detail->jumlah)) {
-                                                            $subtotal = $detail->harga_satuan * $detail->jumlah;
-                                                        } elseif(isset($detail->harga,$detail->qty)) {
-                                                            $subtotal = $detail->harga * $detail->qty;
-                                                        }
-                                                    }
-                                                @endphp
-                                                {{ isset($subtotal) ? number_format($subtotal,0,',','.') : '-' }}
-                                            </td>
-                                        </tr>
-                                    @empty
-                                        <tr>
-                                            <td colspan="6" class="text-center py-4">No detail penerimaan found</td>
-                                        </tr>
-                                    @endforelse
-                                </tbody>
-                            </table>
-                        </div>
+                    <div class="card-body text-center text-muted">No detail_penerimaan found
                     </div>
+                </div>
+
+                <!-- Detail Penerimaan Cards -->
+                <div class="">
+                    @forelse($detailPenerimaans ?? [] as $detail)
+                        <div class="card mb-3">
+                            <div class="card-body">
+                                <div class="row g-3">
+                                    <div class="col-md-3">
+                                        <label class="form-label small text-muted">ID Detail</label>
+                                        <input type="text" class="form-control form-control-sm"
+                                            value="{{ $detail->iddetail_penerimaan ?? ($detail->iddetail ?? ($detail->id ?? '-')) }}"
+                                            readonly>
+                                    </div>
+
+                                    <div class="col-md-4">
+                                        <label class="form-label small text-muted">Barang</label>
+                                        <input type="text" class="form-control form-control-sm"
+                                            value="{{ $detail->nama_barang ?? ($detail->nama ?? ($detail->barang_nama ?? '-')) }}"
+                                            readonly>
+                                    </div>
+
+                                    <div class="col-md-2">
+                                        <label class="form-label small text-muted">Harga
+                                            Satuan</label>
+                                        <input type="text"
+                                            class="form-control form-control-sm text-end"
+                                            value="{{ isset($detail->harga_satuan) ? number_format($detail->harga_satuan, 0, ',', '.') : (isset($detail->harga) ? number_format($detail->harga, 0, ',', '.') : '-') }}"
+                                            readonly>
+                                    </div>
+
+                                    <div class="col-md-1">
+                                        <label class="form-label small text-muted">Jumlah</label>
+                                        <input type="text"
+                                            class="form-control form-control-sm text-center"
+                                            value="{{ $detail->jumlah ?? ($detail->qty ?? ($detail->kuantitas ?? '-')) }}"
+                                            readonly>
+                                    </div>
+
+                                    <div class="col-md-2">
+                                        <label class="form-label small text-muted">Subtotal</label>
+                                        @php
+                                            $subtotal =
+                                                $detail->subtotal ?? ($detail->sub_total ?? null);
+                                            if (!$subtotal) {
+                                                if (isset($detail->harga_satuan, $detail->jumlah)) {
+                                                    $subtotal =
+                                                        $detail->harga_satuan * $detail->jumlah;
+                                                } elseif (isset($detail->harga, $detail->qty)) {
+                                                    $subtotal = $detail->harga * $detail->qty;
+                                                }
+                                            }
+                                        @endphp
+                                        <input type="text"
+                                            class="form-control form-control-sm text-end"
+                                            value="{{ isset($subtotal) ? number_format($subtotal, 0, ',', '.') : '-' }}"
+                                            readonly>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    @empty
+                        <div class="card">
+                            <div class="card-body text-center text-muted">No detail penerimaan found
+                            </div>
+                        </div>
+                    @endforelse
                 </div>
 
             </div>

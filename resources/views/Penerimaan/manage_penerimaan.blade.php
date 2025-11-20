@@ -22,6 +22,17 @@
         <div class="card-body">
             <form action="{{ route('penerimaan.store') }}" method="POST" class="row g-3">
                 @csrf
+                @if ($errors->any())
+                    <div class="col-12 small">
+                        <div class="alert alert-danger">
+                            <ul class="mb-0">
+                                @foreach ($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    </div>
+                @endif
 
                 <div class="col-md-5">
                     <label for="idpengadaan" class="form-label">Pilih Pengadaan</label>
@@ -30,27 +41,13 @@
                         @foreach ($pengadaans as $p)
                             <option value="{{ $p->idpengadaan }}"
                                 data-total="{{ $p->total_nilai ?? 0 }}">
-                                {{ 'ID ' . $p->idpengadaan . ' - ' . $p->nama_vendor . ' - ' . $p->status . ' - ' . $p->created_at }}
+                                {{ 'ID ' . $p->idpengadaan . ' - ' . $p->status . ' - ' . $p->created_at }}
                             </option>
                         @endforeach
                     </select>
                 </div>
 
                 <input type="hidden" name="iduser" value="{{ auth()->user()->id }}">
-
-                <div class="col-md-4">
-                    <label for="idbarang" class="form-label">Pilih Barang</label>
-                    <select name="idbarang" id="idbarang" class="form-select form-select-sm">
-                        @foreach ($barangs as $b)
-                            <option value="{{ $b->idbarang }}">{{ $b->nama }}</option>
-                        @endforeach
-                    </select>
-                </div>
-
-                <div class="col-md-3">
-                    <label for="jumlah_terima" class="form-label">Jumlah Terima</label>
-                    <input type="numeric" name="jumlah_terima" class="form-control form-control-sm">
-                </div>
 
                 <div class="col-md-3">
                     <label for="tgl_penerimaan" class="form-label">Tanggal Penerimaan</label>
@@ -59,7 +56,7 @@
                         value="{{ old('tgl_penerimaan', date('Y-m-d')) }}">
                 </div>
 
-                <div class="col-md-2">
+                {{-- <div class="col-md-2">
                     <label for="status_penerimaan" class="form-label">Status</label>
                     <select name="status_penerimaan" id="status_penerimaan"
                         class="form-select form-select-sm">
@@ -67,41 +64,66 @@
                         <option value="R">Return</option>
                         <option value="S">Selesai</option>
                     </select>
+                </div> --}}
+
+                <div class="col-12">
+                    <label class="form-label">Items</label>
+                    <table class="table table-sm mb-0" id="items_table">
+                        <thead>
+                            <tr>
+                                <th style="width:60%">Barang</th>
+                                <th style="width:20%">Jumlah</th>
+                                <th style="width:20%"> </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="item-row">
+                                <td>
+                                    <select name="idbarang[]"
+                                        class="form-select form-select-sm idbarang">
+                                        <option value="">-- Pilih Barang --</option>
+                                        @foreach ($barangs as $b)
+                                            <option value="{{ $b->idbarang }}"
+                                                data-harga="{{ $b->harga }}">{{ $b->nama }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                    <div class="form-text small text-muted item-sisa">Sisa: -</div>
+                                </td>
+                                <td>
+                                    <input name="jumlah[]"
+                                        class="form-control form-control-sm jumlah text-end"
+                                        inputmode="numeric">
+                                </td>
+                                <td>
+                                    <button type="button"
+                                        class="btn btn-sm btn-danger remove-row">Remove</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
+                <button type="button" id="add-barang" class="btn btn-sm btn-secondary">Tambah
+                    Barang</button>
+
+                <hr>
 
                 <div class="col-12 text-end mt-1">
                     <button type="submit" class="btn btn-primary btn-sm">Add Penerimaan</button>
                 </div>
 
-                {{-- Prediction preview (uses selected pengadaan total) --}}
-                {{-- <div class="col-12 mt-2">
-                    <div class="row g-2">
-                        <div class="col-md-3">
-                            <label class="form-label small text-muted">Prediksi Subtotal</label>
-                            <div id="pred_subtotal" class="form-control form-control-sm">-</div>
-                        </div>
-                        <div class="col-md-3">
-                            <label class="form-label small text-muted">Prediksi PPN
-                                ({{ config('app.ppn_percent', 11) }}%)</label>
-                            <div id="pred_ppn" class="form-control form-control-sm">-</div>
-                        </div>
-                        <div class="col-md-3">
-                            <label class="form-label small text-muted">Prediksi Total</label>
-                            <div id="pred_total" class="form-control form-control-sm">-</div>
-                        </div>
-                        <div class="col-md-3">
-                            <small class="text-muted">Catatan</small>
-                            <div class="form-text">Preview dihitung di browser dari nilai pengadaan;
-                                klik Add untuk menyimpan.</div>
-                        </div>
-                    </div>
-                </div> --}}
+                {{-- preview removed; per-row sisa shown under each select --}}
+                {{-- single flash message block below handles success/error --}}
 
                 <div class="row">
                     @if (session('success'))
                         <div class="alert alert-success alert-dismissible fade show fs-sm"
                             role="alert">
                             {{ session('success') }}
+                        </div>
+                    @elseif (session('error'))
+                        <div class="alert alert-danger alert-dismissible fade show fs-sm">
+                            {{ session('error') }}
                         </div>
                     @endif
                 </div>
@@ -120,7 +142,7 @@
                             <th style="width:50px">No</th>
                             <th style="width:50px ">ID</th>
                             <th style="width: 50px" class="text-center">ID Pengadaan</th>
-                            <th style="width:  " class="text-center">Tanggal</th>
+                            <th style="width:  " class="text-center">Waktu Penerimaan</th>
                             <th>Supplier</th>
                             <th class="text-end">Total</th>
                             <th>Status</th>
@@ -135,7 +157,7 @@
                                 <td>{{ $penerimaan->idpenerimaan ?? ($penerimaan->id ?? '-') }}</td>
                                 <td>{{ $penerimaan->idpengadaan ?? '-' }}</td>
                                 <td class="text-center">
-                                    {{ isset($penerimaan->tgl_penerimaan) ? \Carbon\Carbon::parse($penerimaan->tgl_penerimaan)->format('d M Y') : (isset($penerimaan->created_at) ? \Carbon\Carbon::parse($penerimaan->created_at)->format('d M Y') : '-') }}
+                                    {{ isset($penerimaan->tgl_penerimaan) ? \Carbon\Carbon::parse($penerimaan->tgl_penerimaan)->format('d M Y H:i') : (isset($penerimaan->created_at) ? \Carbon\Carbon::parse($penerimaan->created_at)->format('d M Y H:i') : '-') }}
                                 </td>
                                 <td>{{ $penerimaan->nama_vendor ?? ($penerimaan->vendor->nama_vendor ?? '-') }}
                                 </td>
@@ -199,41 +221,167 @@
 
 @section('scripts')
     <script>
-        (function() {
-            const ppn = {{ config('app.ppn_percent', 11) }};
+        document.addEventListener('DOMContentLoaded', () => {
             const sel = document.getElementById('idpengadaan');
-            const pred_sub = document.getElementById('pred_subtotal');
-            const pred_ppn = document.getElementById('pred_ppn');
-            const pred_total = document.getElementById('pred_total');
+            let currentItems = [];
+            const itemsTable = document.getElementById('items_table');
+            const addBtn = document.getElementById('add-barang');
 
-            function format(n) {
-                return new Intl.NumberFormat('id-ID', {
-                    maximumFractionDigits: 0
-                }).format(n);
+            function formatNumber(n) {
+                return new Intl.NumberFormat('id-ID').format(n);
             }
 
-            function update() {
-                if (!sel) return;
-                const opt = sel.options[sel.selectedIndex];
-                const total = opt ? parseFloat(opt.dataset.total || 0) : 0;
-                if (!opt || !opt.value) {
-                    pred_sub.textContent = '-';
-                    pred_ppn.textContent = '-';
-                    pred_total.textContent = '-';
+            function escapeHtml(str) {
+                if (!str) return '';
+                return String(str).replace(/[&<>"]+/g, function(c) {
+                    return {
+                        '&': '&amp;',
+                        '<': '&lt;',
+                        '>': '&gt;',
+                        '"': '&quot;'
+                    } [c] || c;
+                });
+            }
+
+            // Build option HTML from items array
+            function buildOptions(items) {
+                const base = '<option value="">-- Pilih Barang --</option>';
+                const opts = items.map(i => {
+                    const harga = i.harga ?? 0;
+                    const sisa = i.sisa ?? 0;
+                    return `<option value="${i.idbarang}" data-harga="${harga}" data-sisa="${sisa}">${i.nama}</option>`;
+                }).join('');
+                return base + opts;
+            }
+
+            // When pengadaan items arrive we store them so per-row sisa can be shown
+            function updatePreviewFromItems(items) {
+                currentItems = items || [];
+            }
+
+            // Fill item selects with provided items
+            function populateItemSelects(items) {
+                const tbody = itemsTable.querySelector('tbody');
+                const selects = tbody.querySelectorAll('.idbarang');
+                const opts = buildOptions(items);
+                selects.forEach(s => {
+                    // preserve current value if exists in new items
+                    const cur = s.value;
+                    s.innerHTML = opts;
+                    if (cur) {
+                        const found = Array.from(s.options).some(o => o.value === cur);
+                        if (found) s.value = cur;
+                    }
+                    // update per-row sisa display based on selected option
+                    const row = s.closest('.item-row');
+                    const sisaEl = row?.querySelector('.item-sisa');
+                    const selOpt = s.selectedOptions?.[0];
+                    const sisaVal = selOpt ? Number(selOpt.dataset.sisa || 0) : null;
+                    if (sisaEl) sisaEl.textContent = (sisaVal !== null) ? ('Sisa: ' + (
+                        sisaVal ? formatNumber(sisaVal) : '0')) : 'Sisa: -';
+                });
+            }
+
+            // Recalculate subtotal based on selected item harga and jumlah inputs
+            function recalcSubtotalFromRows() {
+                const rows = itemsTable.querySelectorAll('.item-row');
+
+                rows.forEach(row => {
+                    const select = row.querySelector('.idbarang');
+                    const sisaEl = row.querySelector('.item-sisa');
+
+                    const opt = select?.selectedOptions[0];
+
+                    if (!opt || !opt.dataset.sisa) {
+                        sisaEl.textContent = 'Sisa: -';
+                        return;
+                    }
+
+                    const sisa = Number(opt.dataset.sisa);
+
+                    sisaEl.textContent = "Sisa: " + sisa;
+                });
+            }
+
+
+            // Fetch items for pengadaan via AJAX and populate selects + preview
+            async function fetchPengadaanItems(id) {
+                if (!id) {
+                    // reset per-row sisa displays and stored items
+                    currentItems = [];
+                    itemsTable.querySelectorAll('.item-sisa').forEach(el => el.textContent =
+                        'Sisa: -');
+                    const summaryEl = document.getElementById('pred_items');
+                    if (summaryEl) summaryEl.innerHTML = '-';
                     return;
                 }
-                const subtotal = total;
-                const ppnval = Math.round(subtotal * ppn / 100);
-                const totalval = subtotal + ppnval;
-                pred_sub.textContent = format(subtotal);
-                pred_ppn.textContent = format(ppnval);
-                pred_total.textContent = format(totalval);
+                try {
+                    const res = await fetch(`/pengadaan/${id}/items`);
+                    if (!res.ok) throw new Error('Network response was not ok');
+                    const json = await res.json();
+                    const items = json.items || [];
+                    const total = json.total ?? 0;
+                    populateItemSelects(items);
+                    updatePreviewFromItems(items);
+                    // after populating selects, recalc subtotal from current jumlah inputs
+                    recalcSubtotalFromRows();
+                } catch (err) {
+                    console.error('Failed to fetch pengadaan items', err);
+                }
             }
 
-            if (sel) {
-                sel.addEventListener('change', update);
-                update();
-            }
-        })();
+            // Event bindings
+            sel?.addEventListener('change', (e) => {
+                const id = e.target.value;
+                fetchPengadaanItems(id);
+            });
+
+            // Delegate input/change on table to recalc subtotal
+            itemsTable?.addEventListener('input', (e) => {
+                if (e.target.classList.contains('jumlah')) recalcSubtotalFromRows();
+            });
+            itemsTable?.addEventListener('change', (e) => {
+                if (e.target.classList.contains('idbarang')) recalcSubtotalFromRows();
+            });
+
+            // Add row
+            addBtn?.addEventListener('click', () => {
+                const tbody = itemsTable.querySelector('tbody');
+                const template = tbody.querySelector('.item-row');
+                const clone = template.cloneNode(true);
+                clone.querySelectorAll('select, input').forEach(el => {
+                    if (el.tagName.toLowerCase() === 'select') el
+                        .selectedIndex = 0;
+                    else el.value = '';
+                });
+                tbody.appendChild(clone);
+                // if a pengadaan is selected and we have fetched items, populate options and sisa on the new row
+                if (currentItems && currentItems.length) {
+                    populateItemSelects(currentItems);
+                }
+                recalcSubtotalFromRows();
+            });
+
+            // Remove row (delegated)
+            itemsTable?.addEventListener('click', (e) => {
+                if (e.target.classList.contains('remove-row')) {
+                    const tbody = itemsTable.querySelector('tbody');
+                    const rows = tbody.querySelectorAll('.item-row');
+                    const row = e.target.closest('.item-row');
+                    if (rows.length > 1) row.remove();
+                    else {
+                        row.querySelectorAll('select, input').forEach(el => {
+                            if (el.tagName.toLowerCase() === 'select') el
+                                .selectedIndex = 0;
+                            else el.value = '';
+                        });
+                    }
+                    recalcSubtotalFromRows();
+                }
+            });
+
+            // initial: if a pengadaan is preselected, fetch its items; otherwise leave server-rendered barang list
+            if (sel && sel.value) fetchPengadaanItems(sel.value);
+        });
     </script>
 @endsection

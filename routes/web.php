@@ -32,9 +32,11 @@ Route::middleware(['auth', 'cekrole:1'])->group(function () {
     Route::get('/detail_penjualan', [App\Http\Controllers\DetailPenjualanController::class, 'index']);
     // Manage Penerimaan(CRUD)
     Route::get('/manage_penerimaan', [App\Http\Controllers\PenerimaanController::class, 'index']);
+    Route::get('/pengadaan/{id}/items', [App\Http\Controllers\PenerimaanController::class, 'getPengadaanItems']);
+
     Route::post('/manage_penerimaan', [App\Http\Controllers\PenerimaanController::class, 'store'])->name('penerimaan.store');
-    // Detail Penerimaan
-    Route::get('/detail_penerimaan', [App\Http\Controllers\DetailPenerimaanController::class, 'index']);
+    Route::get('/detail_penerimaan/{id}', [App\Http\Controllers\PenerimaanController::class, 'show'])->name('penerimaan.detail_penerimaan');
+    Route::delete('/delete_penerimaan/{id}', [App\Http\Controllers\PenerimaanController::class, 'destroy'])->name('penerimaan.destroy');
     // Manage Pengadaan (CRUD)
     Route::get('/manage_pengadaan', [App\Http\Controllers\PengadaanController::class, 'index'])->name('pengadaan.manage_pengadaan');
     Route::get('/detail_pengadaan/{id}', [App\Http\Controllers\PengadaanController::class, 'show'])->name('pengadaan.detail_pengadaan');

@@ -140,15 +140,20 @@ class PenerimaanController extends Controller
      */
     public function getPengadaanItems($id)
     {
-        $rows = DB::table('pengadaan_barang')
-            ->where('idpengadaan', $id)
+        // Fetch pengadaan items and compute already received quantity per item
+        $rows = DB::table('pengadaan_barang as pb')
+            ->where('pb.idpengadaan', $id)
+            ->select([
+                'pb.*',
+                DB::raw('(SELECT IFNULL(SUM(dp.jumlah_terima),0) FROM detail_penerimaan dp JOIN penerimaan p2 ON p2.idpenerimaan = dp.idpenerimaan WHERE p2.idpengadaan = pb.idpengadaan AND dp.idbarang = pb.idbarang) as total_diterima')
+            ])
             ->get();
 
         $items = [];
         foreach ($rows as $r) {
             // try to read common column names used across versions
             $jumlah = isset($r->jumlah) ? (float) $r->jumlah : (isset($r->jumlah_barang) ? (float) $r->jumlah_barang : 0);
-            $total_diterima = isset($r->total_diterima) ? (float) $r->total_diterima : (isset($r->diterima) ? (float) $r->diterima : 0);
+            $total_diterima = isset($r->total_diterima) ? (float) $r->total_diterima : 0;
             $harga = isset($r->harga) ? (float) $r->harga : (isset($r->harga_satuan) ? (float) $r->harga_satuan : (isset($r->price) ? (float) $r->price : 0));
             $subtotal = $harga * $jumlah;
             $sisa = max(0, $jumlah - $total_diterima);
@@ -184,6 +189,32 @@ class PenerimaanController extends Controller
         } catch (\Exception $e) {
             logger()->error('Hapus penerimaan failed: ' . $e->getMessage());
             return redirect()->back()->with('error', 'Gagal menghapus penerimaan: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Update the specified penerimaan (used to set status).
+     */
+    public function update(Request $request, $id)
+    {
+        $data = $request->validate([
+            'status_penerimaan' => 'required|string|in:O,S,R',
+        ]);
+
+        try {
+            $affected = DB::update('UPDATE pengadaan_penerimaan SET status_penerimaan = ? WHERE idpenerimaan = ?', [
+                $data['status_penerimaan'],
+                $id,
+            ]);
+
+            if ($affected) {
+                return redirect('/manage_penerimaan')->with('success', 'Status penerimaan berhasil diperbarui.');
+            }
+
+            return redirect('/manage_penerimaan')->with('error', 'Penerimaan tidak ditemukan atau tidak diubah.');
+        } catch (\Exception $e) {
+            logger()->error('Update penerimaan status failed: ' . $e->getMessage(), ['id' => $id, 'payload' => $request->all()]);
+            return redirect()->back()->with('error', 'Gagal mengubah status: ' . $e->getMessage());
         }
     }
 }

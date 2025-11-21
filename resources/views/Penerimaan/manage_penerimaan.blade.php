@@ -111,25 +111,20 @@
                 <div class="col-12 text-end mt-1">
                     <button type="submit" class="btn btn-primary btn-sm">Add Penerimaan</button>
                 </div>
-
-                {{-- preview removed; per-row sisa shown under each select --}}
-                {{-- single flash message block below handles success/error --}}
-
-                <div class="row">
-                    @if (session('success'))
-                        <div class="alert alert-success alert-dismissible fade show fs-sm"
-                            role="alert">
-                            {{ session('success') }}
-                        </div>
-                    @elseif (session('error'))
-                        <div class="alert alert-danger alert-dismissible fade show fs-sm">
-                            {{ session('error') }}
-                        </div>
-                    @endif
-                </div>
-
             </form>
         </div>
+    </div>
+
+    <div class="col-12 mb-3">
+        @if (session('success'))
+            <div class="alert alert-success alert-dismissible fade show fs-sm" role="alert">
+                {{ session('success') }}
+            </div>
+        @elseif (session('error'))
+            <div class="alert alert-danger alert-dismissible fade show fs-sm">
+                {{ session('error') }}
+            </div>
+        @endif
     </div>
 
     <!-- Penerimaan Table -->
@@ -166,9 +161,8 @@
                                 </td>
                                 <td>
                                     @php
-                                        $st =
-                                            $penerimaan->status_penerimaan;
-                                           
+                                        $st = $penerimaan->status_penerimaan;
+
                                         switch ($st) {
                                             case 'O':
                                                 $cls = 'bg-warning text-dark';
@@ -193,8 +187,12 @@
                                 <td>{{ $penerimaan->username ?? ($penerimaan->user->username ?? '-') }}
                                 </td>
                                 <td>
-                                    <a href="{{ url('/manage_penerimaan/' . ($penerimaan->idpenerimaan ?? ($penerimaan->id ?? '')) . '/edit') }}"
-                                        class="btn btn-sm btn-warning me-1">Edit</a>
+
+                                    <button type="button"
+                                        class="btn btn-sm btn-primary me-1 btn-edit-popup"
+                                        data-id="{{ $penerimaan->idpenerimaan ?? ($penerimaan->id ?? '') }}"
+                                        data-status="{{ $penerimaan->status_penerimaan ?? ($penerimaan->status ?? '') }}">Set
+                                        Status</button>
                                     <a href="{{ url('/detail_penerimaan/' . ($penerimaan->idpenerimaan ?? ($penerimaan->id ?? ''))) }}"
                                         class="btn btn-sm btn-info me-1">View</a>
                                     <form
@@ -282,25 +280,70 @@
                 });
             }
 
-            // Recalculate subtotal based on selected item harga and jumlah inputs
+            // Recalculate remaining 'sisa' per item across all rows and validate inputs
             function recalcSubtotalFromRows() {
-                const rows = itemsTable.querySelectorAll('.item-row');
+                const rows = Array.from(itemsTable.querySelectorAll('.item-row'));
 
+                // First, aggregate requested quantities per selected item id
+                const requested = {};
+                rows.forEach(row => {
+                    const sel = row.querySelector('.idbarang');
+                    const qtyEl = row.querySelector('.jumlah');
+                    const id = sel?.value || '';
+                    const qty = qtyEl ? parseInt((qtyEl.value || '').toString().replace(
+                        /[^0-9-]/g, '')) || 0 : 0;
+                    if (id) {
+                        requested[id] = (requested[id] || 0) + qty;
+                    }
+                });
+
+                let hasError = false;
+
+                // Now, for each row compute remaining and validate
                 rows.forEach(row => {
                     const select = row.querySelector('.idbarang');
+                    const qtyEl = row.querySelector('.jumlah');
                     const sisaEl = row.querySelector('.item-sisa');
+                    const opt = select?.selectedOptions?.[0];
+                    const id = select?.value || '';
 
-                    const opt = select?.selectedOptions[0];
-
-                    if (!opt || !opt.dataset.sisa) {
-                        sisaEl.textContent = 'Sisa: -';
+                    if (!opt || typeof opt.dataset.sisa === 'undefined') {
+                        if (sisaEl) sisaEl.textContent = 'Sisa: -';
+                        if (qtyEl) qtyEl.classList.remove('is-invalid');
                         return;
                     }
 
-                    const sisa = Number(opt.dataset.sisa);
+                    const initialSisa = Number(opt.dataset.sisa || 0);
+                    const totalRequested = requested[id] || 0;
+                    const remaining = initialSisa - totalRequested;
 
-                    sisaEl.textContent = "Sisa: " + sisa;
+                    if (sisaEl) {
+                        // If remaining negative, show negative with minus sign and red text
+                        if (remaining < 0) {
+                            sisaEl.textContent = 'Sisa: -' + formatNumber(Math.abs(
+                                remaining));
+                            sisaEl.classList.add('text-danger');
+                        } else {
+                            sisaEl.textContent = 'Sisa: ' + (remaining ? formatNumber(
+                                remaining) : '0');
+                            sisaEl.classList.remove('text-danger');
+                        }
+                    }
+
+                    if (qtyEl) {
+                        if (totalRequested > initialSisa) {
+                            qtyEl.classList.add('is-invalid');
+                            hasError = true;
+                        } else {
+                            qtyEl.classList.remove('is-invalid');
+                        }
+                    }
                 });
+
+                // disable submit button if any invalid
+                const formEl = itemsTable.closest('form');
+                const submitBtn = formEl ? formEl.querySelector('button[type="submit"]') : null;
+                if (submitBtn) submitBtn.disabled = hasError;
             }
 
 
@@ -382,6 +425,70 @@
 
             // initial: if a pengadaan is preselected, fetch its items; otherwise leave server-rendered barang list
             if (sel && sel.value) fetchPengadaanItems(sel.value);
+
+            // Edit Status modal handler
+            const editButtons = document.querySelectorAll('.btn-edit-popup');
+            const editForm = document.getElementById('editStatusForm');
+            const editSelect = document.getElementById('edit_status_penerimaan');
+            const editModalEl = document.getElementById('editStatusModal');
+            let editModal = null;
+            if (editModalEl && typeof bootstrap !== 'undefined') {
+                editModal = new bootstrap.Modal(editModalEl);
+            }
+
+            editButtons.forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const id = btn.dataset.id;
+                    const status = btn.dataset.status || '';
+                    if (!editForm) return;
+                    // set form action to the resource update endpoint (PUT)
+                    editForm.action = '/manage_penerimaan/' +
+                        encodeURIComponent(id);
+                    // set method override
+                    const methodInput = editForm.querySelector(
+                        'input[name=_method]');
+                    if (methodInput) methodInput.value = 'PUT';
+                    // set select value
+                    if (editSelect) editSelect.value = status;
+                    // show modal
+                    if (editModal) editModal.show();
+                });
+            });
         });
     </script>
 @endsection
+
+<!-- Edit Status Modal -->
+<div class="modal fade" id="editStatusModal" tabindex="-1" aria-labelledby="editStatusModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-sm modal-dialog-centered">
+        <div class="modal-content">
+            <form id="editStatusForm" method="POST">
+                @csrf
+                <input type="hidden" name="_method" value="PUT">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editStatusModalLabel">Set Status Penerimaan</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-2">
+                        <label for="edit_status_penerimaan"
+                            class="form-label small">Status</label>
+                        <select id="edit_status_penerimaan" name="status_penerimaan"
+                            class="form-select form-select-sm">
+                            <option value="O">In Process</option>
+                            <option value="S">Selesai</option>
+                            <option value="R">Return</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-sm btn-secondary"
+                        data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-sm btn-primary">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

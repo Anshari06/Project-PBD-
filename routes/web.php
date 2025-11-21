@@ -35,6 +35,7 @@ Route::middleware(['auth', 'cekrole:1'])->group(function () {
     Route::get('/pengadaan/{id}/items', [App\Http\Controllers\PenerimaanController::class, 'getPengadaanItems']);
 
     Route::post('/manage_penerimaan', [App\Http\Controllers\PenerimaanController::class, 'store'])->name('penerimaan.store');
+    Route::put('/manage_penerimaan/{id}', [App\Http\Controllers\PenerimaanController::class, 'update'])->name('penerimaan.update');
     Route::get('/detail_penerimaan/{id}', [App\Http\Controllers\PenerimaanController::class, 'show'])->name('penerimaan.detail_penerimaan');
     Route::delete('/delete_penerimaan/{id}', [App\Http\Controllers\PenerimaanController::class, 'destroy'])->name('penerimaan.destroy');
     // Manage Pengadaan (CRUD)

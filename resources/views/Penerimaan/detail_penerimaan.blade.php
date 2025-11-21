@@ -63,8 +63,31 @@
                                 <div class="col-md-3 text-end">
                                     <strong>Status:</strong>
                                     <div class="mt-1">
+                                        @php
+                                            $st =
+                                                $penerimaan->status_penerimaan ??
+                                                ($penerimaan->status ?? null);
+                                            switch ($st) {
+                                                case 'O':
+                                                    $cls = 'bg-warning text-dark';
+                                                    $lbl = 'In Process';
+                                                    break;
+                                                case 'S':
+                                                    $cls = 'bg-success';
+                                                    $lbl = 'Selesai';
+                                                    break;
+                                                case 'R':
+                                                    $cls = 'bg-danger';
+                                                    $lbl = 'Return';
+                                                    break;
+                                                default:
+                                                    $cls = 'bg-secondary';
+                                                    $lbl = $st ?? '-';
+                                                    break;
+                                            }
+                                        @endphp
                                         <span
-                                            class="badge {{ ($penerimaan->status ?? '0') == '1' ? 'bg-success' : 'bg-secondary' }}">{{ ($penerimaan->status ?? '0') == '1' ? 'Selesai' : 'Proses' }}</span>
+                                            class="badge {{ $cls }}">{{ $lbl }}</span>
                                     </div>
                                 </div>
                             </div>
@@ -110,7 +133,7 @@
                                         <label class="form-label small text-muted">Jumlah</label>
                                         <input type="text"
                                             class="form-control form-control-sm text-center"
-                                            value="{{ $detail->jumlah ?? ($detail->qty ?? ($detail->kuantitas ?? '-')) }}"
+                                            value="{{ $detail->jumlah_terima ?? ($detail->qty ?? ($detail->kuantitas ?? '-')) }}"
                                             readonly>
                                     </div>
 
@@ -118,7 +141,7 @@
                                         <label class="form-label small text-muted">Subtotal</label>
                                         @php
                                             $subtotal =
-                                                $detail->subtotal ?? ($detail->sub_total ?? null);
+                                                $detail->sub_total_penerimaan ?? ($detail->sub_total ?? null);
                                             if (!$subtotal) {
                                                 if (isset($detail->harga_satuan, $detail->jumlah)) {
                                                     $subtotal =

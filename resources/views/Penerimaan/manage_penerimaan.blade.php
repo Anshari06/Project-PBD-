@@ -167,8 +167,8 @@
                                 <td>
                                     @php
                                         $st =
-                                            $penerimaan->status_penerimaan ??
-                                            ($penerimaan->status ?? 'pengajuan');
+                                            $penerimaan->status_penerimaan;
+                                           
                                         switch ($st) {
                                             case 'O':
                                                 $cls = 'bg-warning text-dark';

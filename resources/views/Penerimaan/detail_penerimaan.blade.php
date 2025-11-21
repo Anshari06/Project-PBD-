@@ -70,11 +70,12 @@
                             </div>
                         </div>
                     </div>
-                @endif
-                <div class="card">
-                    <div class="card-body text-center text-muted">No detail_penerimaan found
+                @else
+                    <div class="card">
+                        <div class="card-body text-center text-muted">No detail_penerimaan found
+                        </div>
                     </div>
-                </div>
+                @endif
 
                 <!-- Detail Penerimaan Cards -->
                 <div class="">

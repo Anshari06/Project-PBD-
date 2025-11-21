@@ -128,7 +128,7 @@ class PenerimaanController extends Controller
             ->where('idpenerimaan', $id)
             ->first();
 
-        $detailPenerimaans = DB::table('pengadaan_penerimaan')
+        $detailPenerimaans = DB::table('penerimaan_barang')
             ->where('idpenerimaan', $id)
             ->get();
 

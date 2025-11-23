@@ -25,60 +25,23 @@ class PengadaanController extends Controller
 
     public function store(Request $request)
     {
-        // create pengadaan header
-        DB::insert(
-            "INSERT INTO pengadaan (idvendor, iduser, status, total_nilai, subtotal_nilai) VALUES (?, ?, ?, 0, 0)",
-            [
-                $request->input('idvendor'),
-                Auth::id(),
-                'P',
-            ]
-        );
+        // Convert array ke string "1,2,3"
+        $idbarang_list = implode(',', $request->idbarang);
+        $jumlah_list = implode(',', $request->jumlah);
 
-        $idpengadaan = DB::getPdo()->lastInsertId();
+        $result = DB::select("CALL tambah_pengadaan(?, ?, ?, ?)", [
+            $request->idvendor,
+            Auth::id(),
+            $idbarang_list,
+            $jumlah_list
+        ]);
 
-        // insert multiple detail_pengadaan rows from arrays
-        $idbarangs = $request->input('idbarang', []);
-        $jumlahs = $request->input('jumlah', []);
+        $idpengadaan = $result[0]->idpengadaan;
 
-        foreach ($idbarangs as $i => $idb) {
-            $jumlah = isset($jumlahs[$i]) ? intval($jumlahs[$i]) : 0;
-            if (empty($idb) || $jumlah <= 0) {
-                continue; // skip empty rows
-            }
-
-            DB::insert(
-                "INSERT INTO detail_pengadaan (idbarang, harga_satuan, jumlah, sub_total, idpengadaan) VALUES (?, (SELECT harga FROM barang WHERE idbarang = ?), ?, hitung_subtotal(?, (SELECT harga FROM barang WHERE idbarang = ?)), ?)",
-                [
-                    $idb,
-                    $idb,
-                    $jumlah,
-                    $jumlah,
-                    $idb,
-                    $idpengadaan,
-                ]
-            );
-        }
-
-        DB::update(
-            "
-            UPDATE pengadaan 
-            SET subtotal_nilai = (
-                SELECT SUM(sub_total) 
-                FROM detail_pengadaan 
-                WHERE detail_pengadaan.idpengadaan = pengadaan.idpengadaan
-            )
-            WHERE idpengadaan = ?",
-            [$idpengadaan]
-        );
-        DB::update("
-            UPDATE pengadaan
-            SET total_nilai = hitung_total_ppn(subtotal_nilai, 11)
-            WHERE idpengadaan = ?", [$idpengadaan]);
-
-
-        return redirect()->route('pengadaan.manage_pengadaan')->with('success', 'Pengadaan berhasil ditambahkan. BRUH LUU NOW FINEESHEEYT');
+        return redirect()->route('pengadaan.manage_pengadaan')
+            ->with('success', 'Pengadaan berhasil dibuat dengan SP');
     }
+
 
     public function show($id)
     {

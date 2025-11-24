@@ -27,55 +27,49 @@ class PenjualanController extends Controller
 
     public function store(Request $request)
     {
-        // The form uses `tanggal`, `idbarang[]` and `jumlah[]`.
         $request->validate([
-            'tanggal'   => 'required|date',
-            'idbarang'  => 'required',
-            'jumlah'    => 'required'
+            'idbarang' => 'required|array',
+            'jumlah'   => 'required|array'
         ]);
 
-        // Normalize to arrays (support single-row or multiple-row submissions)
-        $idbarang = $request->input('idbarang');
-        $jumlah = $request->input('jumlah');
-        if (!is_array($idbarang)) $idbarang = [$idbarang];
-        if (!is_array($jumlah)) $jumlah = [$jumlah];
+        $idbarang = $request->input('idbarang');   // array
+        $jumlah   = $request->input('jumlah');     // array
 
+        // Pastikan panjang array sama
         if (count($idbarang) !== count($jumlah)) {
-            return redirect()->back()->withInput()->with('error', 'Jumlah barang dan kuantitas tidak cocok.');
+            return back()->withInput()->with('error', 'Jumlah barang dan kuantitas tidak cocok.');
         }
 
-        // Default PPN if not provided in the form
-        $ppn = (int) $request->input('persen_ppn', 0);
-        $tgl = $request->input('tanggal');
+        // Convert array → string list: "1,3,10"
+        $idbarangList = implode(',', $idbarang);
+        $jumlahList   = implode(',', $jumlah);
         $iduser = Auth::id();
+        $ppn = 11;
 
         try {
             DB::beginTransaction();
 
-            // Call stored procedure for each item. Current SP creates its own header.
-            foreach ($idbarang as $i => $bid) {
-                $qty = (int) $jumlah[$i];
-                if ($qty <= 0) {
-                    throw new \Exception('Jumlah harus lebih besar dari 0 pada baris ' . ($i + 1));
-                }
-
-                DB::statement('CALL tambah_penjualan(?, ?, ?, ?, ?)', [
-                    $iduser,
-                    $tgl,
-                    $ppn,
-                    (int) $bid,
-                    $qty
-                ]);
-            }
+            DB::statement('CALL tambah_penjualan(?, ?, ?, ?)', [
+                $iduser,        // p_iduser
+                $ppn,           // p_persen_ppn
+                $idbarangList,  // p_idbarang_list
+                $jumlahList     // p_jumlah_list
+            ]);
 
             DB::commit();
-            return redirect()->back()->with('success', 'Penjualan berhasil ditambahkan!');
+            return back()->with('success', 'Penjualan berhasil ditambahkan!');
         } catch (\Exception $e) {
+
             DB::rollBack();
-            logger()->error('Tambah penjualan failed: ' . $e->getMessage(), ['payload' => $request->all()]);
-            return redirect()->back()->withInput()->with('error', $e->getMessage());
+            logger()->error('Tambah penjualan gagal: ' . $e->getMessage(), [
+                'payload' => $request->all()
+            ]);
+
+            return back()->withInput()->with('error', $e->getMessage());
         }
     }
+
+
     public function show($id)
     {
         // Try to load penjualan header from penjualan table (fallbacks handled in view)

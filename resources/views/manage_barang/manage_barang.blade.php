@@ -182,7 +182,7 @@
                                         <tr>
                                             <td>{{ $loop->iteration }}</td>
                                             <td>{{ $barang->idbarang }}</td>
-                                            <td>{{ $barang->nama ?? '-' }}</td>
+                                            <td>{{ $barang->nama ?? $barang->nama_satuan ?? '-' }}</td>
                                             <td>{{ $barang->harga ?? '-' }}</td>
                                             <td>
                                                 @switch($barang->jenis)

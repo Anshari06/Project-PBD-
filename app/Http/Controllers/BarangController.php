@@ -14,7 +14,9 @@ class BarangController extends Controller
         $showAll = $request->boolean('show_all');
 
         if ($showAll) {
-            $sql = 'SELECT * FROM barang ORDER BY idbarang';
+            // join satuan to include nama_satuan; ORDER BY after JOIN
+            $sql = 'SELECT barang.*, satuan.nama_satuan FROM barang 
+            LEFT JOIN satuan ON barang.idsatuan = satuan.idsatuan ORDER BY barang.idbarang';
         } else {
             $sql = 'SELECT * FROM barang_aktif ORDER BY idbarang';
         }

@@ -75,6 +75,27 @@
                     </div>
                 </div>
 
+                <!-- Toggle Active / All Satuan -->
+                <div class="d-flex align-items-center mb-3">
+                    @php
+                        $allUrl = request()->fullUrlWithQuery(['show_all' => 1]);
+                        $activeUrl = request()->fullUrlWithQuery(['show_all' => 0]);
+                    @endphp
+                    <div class="me-3">
+                        <div class="btn-group btn-group-sm" role="group" aria-label="Toggle satuan">
+                            <a href="{{ $activeUrl }}" class="btn {{ empty(request('show_all')) || request('show_all') == '0' ? 'btn-outline-primary' : 'btn-outline-secondary' }}">Aktif</a>
+                            <a href="{{ $allUrl }}" class="btn {{ request('show_all') == '1' ? 'btn-outline-primary' : 'btn-outline-secondary' }}">Semua</a>
+                        </div>
+                    </div>
+                    <div>
+                        @if(!empty($showAll))
+                            <strong>Menampilkan: Semua Satuan</strong>
+                        @else
+                            <strong>Menampilkan: Satuan (digunakan oleh barang)</strong>
+                        @endif
+                    </div>
+                </div>
+
                 <!-- Satuan Table -->
                 <div class="card">
                     <div class="card-body p-0">
@@ -98,8 +119,8 @@
                                             <td>{{ $satuan->nama_satuan ?? '-' }}</td>
                                             <td>
                                                 <span
-                                                    class="badge {{ $satuan->status_satuan == 1 ? 'btn-success' : 'btn-danger' }}">
-                                                    {{ $satuan->status_satuan == 1 ? 'Aktif' : 'Non-aktif' }}
+                                                    class="badge {{ (($satuan->status_satuan ?? $satuan->status) == 1) ? 'bg-success' : 'bg-danger' }}">
+                                                    {{ (($satuan->status_satuan ?? $satuan->status) == 1) ? 'Aktif' : 'Non-aktif' }}
                                                 </span>
                                             </td>
                                             <td>

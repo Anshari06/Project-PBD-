@@ -9,9 +9,16 @@ class SatuanController extends Controller
 {
     public function index(Request $request)
     {
-        // Ambil daftar satuan unik (satu baris per idsatuan) dari view.
-        // Pilih kolom yang diperlukan agar DISTINCT bekerja dengan benar.
-        $satuans = collect(DB::select('SELECT DISTINCT * FROM barang_satuan_stock_status ORDER BY idsatuan'));
+        // allow toggling between view of satuan used by products (default) and all satuan via ?show_all=1
+        $showAll = $request->boolean('show_all');
+
+        if ($showAll) {
+            // all satuan definitions
+            $satuans = collect(DB::select('SELECT * FROM satuan ORDER BY idsatuan'));
+        } else {
+            // default: satuan as shown in barang_satuan_stock_status view
+            $satuans = collect(DB::select('SELECT DISTINCT * FROM satuan ORDER BY idsatuan'));
+        }
 
         $dataSatuans = collect(DB::select('SELECT * FROM satuan'));
 
@@ -19,7 +26,7 @@ class SatuanController extends Controller
         $idsatua = $request->query('idsatuan'); // atau $request->input('idsatuan')
         $satuanByID = collect(DB::select('CALL lihat_barang_per_satuan(?)', [$idsatua]));
 
-        return view('manage_satuan.manage_satuan', compact('satuans', 'dataSatuans', 'satuanByID'));
+        return view('manage_satuan.manage_satuan', compact('satuans', 'dataSatuans', 'satuanByID', 'showAll'));
     }
 
     // public function store(Request $request)

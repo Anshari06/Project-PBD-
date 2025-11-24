@@ -119,7 +119,7 @@
                                                 {{ isset($p->subtotal_nilai) ? number_format($p->subtotal_nilai, 0, ',', '.') : '-' }}
                                             </td>
                                             <td >
-                                                {{ isset($p->total) ? number_format($p->total, 0, ',', '.') : '-' }}
+                                                {{ isset($p->total_nilai) ? number_format($p->total_nilai, 0, ',', '.') : '-' }}
                                             </td>
                                             <td>{{ $p->idmargin_penjualan ?? '-' }}</td>
                                         </tr>

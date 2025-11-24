@@ -73,10 +73,13 @@
                             class="row g-2 align-items-end">
                             <div class="col-md-4">
                                 <label for="vendor_id" class="form-label">Pilih Vendor</label>
-                                <select name="vendor_id" id="vendor_id" class="form-select form-select-sm">
+                                <select name="vendor_id" id="vendor_id"
+                                    class="form-select form-select-sm">
                                     <option value="">-- Pilih Vendor --</option>
-                                    @foreach($allVendors ?? collect() as $v)
-                                        <option value="{{ $v->idvendor }}" {{ request('vendor_id') == $v->idvendor ? 'selected' : '' }}>{{ $v->idvendor }} - {{ $v->nama_vendor }}</option>
+                                    @foreach ($allVendors ?? collect() as $v)
+                                        <option value="{{ $v->idvendor }}"
+                                            {{ request('vendor_id') == $v->idvendor ? 'selected' : '' }}>
+                                            {{ $v->idvendor }} - {{ $v->nama_vendor }}</option>
                                     @endforeach
                                 </select>
                             </div>
@@ -92,10 +95,35 @@
                                     </div>
                                 @else
                                     <div class="text-muted small">Masukkan ID vendor dan tekan
-                                        <strong>Cek</strong> untuk melihat status.</div>
+                                        <strong>Cek</strong> untuk melihat status.
+                                    </div>
                                 @endif
                             </div>
                         </form>
+                    </div>
+                </div>
+
+                <!-- Toggle Active / All Vendors -->
+                <div class="d-flex align-items-center mb-3">
+                    @php
+                        $allUrl = request()->fullUrlWithQuery(['show_all' => 1]);
+                        $activeUrl = request()->fullUrlWithQuery(['show_all' => 0]);
+                    @endphp
+                    <div class="me-3">
+                        <div class="btn-group btn-group-sm" role="group"
+                            aria-label="Toggle vendors">
+                            <a href="{{ $activeUrl }}"
+                                class="btn {{ empty(request('show_all')) || request('show_all') == '0' ? 'btn-outline-primary' : 'btn-outline-secondary' }}">Aktif</a>
+                            <a href="{{ $allUrl }}"
+                                class="btn {{ request('show_all') == '1' ? 'btn-outline-primary' : 'btn-outline-secondary' }}">Semua</a>
+                        </div>
+                    </div>
+                    <div>
+                        @if (!empty($showAll))
+                            <strong>Menampilkan: Semua Vendor</strong>
+                        @else
+                            <strong>Menampilkan: Vendor Aktif</strong>
+                        @endif
                     </div>
                 </div>
 

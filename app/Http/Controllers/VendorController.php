@@ -10,7 +10,14 @@ class VendorController extends Controller
 {
     public function index(Request $request)
     {
-        $allVendors = DB::table('vendor_aktif')->get();
+        // allow toggling between active-only (default) and all vendors via ?show_all=1
+        $showAll = $request->boolean('show_all');
+
+        if ($showAll) {
+            $allVendors = DB::table('vendor')->get();
+        } else {
+            $allVendors = DB::table('vendor_aktif')->get();
+        }
 
         $vendorStatus = null;
 
@@ -22,7 +29,6 @@ class VendorController extends Controller
             $vendorStatus = $result[0]->Status ?? 'Tidak ditemukan';
         }
 
-
-        return view('Vendor.vendor', compact('allVendors', 'vendorStatus'));
+        return view('Vendor.vendor', compact('allVendors', 'vendorStatus', 'showAll'));
     }
 }

@@ -81,35 +81,36 @@
                     <div class="card-body">
                         <div class="row align-items-center">
                             <div class="col-md-6">
-                                <form action="{{ url('/manage_barang') }}" method="GET"
-                                    class="row g-2 align-items-end">
-                                    <div class="col-8">
-                                        <label for="jenis_barang"
-                                            class="form-label visually-hidden">Jenis</label>
-                                        <select id="jenis_barang" name="jenis_barang"
-                                            class="form-select form-select-sm">
-                                            <option value="">-- Pilih Jenis --</option>
-                                            <option value="M"
-                                                {{ request('jenis_barang') == 'M' ? 'selected' : '' }}>
-                                                M (Makanan)</option>
-                                            <option value="K"
-                                                {{ request('jenis_barang') == 'K' ? 'selected' : '' }}>
-                                                K (Kebutuhan)</option>
-                                            <option value="J"
-                                                {{ request('jenis_barang') == 'J' ? 'selected' : '' }}>
-                                                J (Jasa)</option>
-                                        </select>
-                                    </div>
-                                    <div class="col-4 d-grid">
-                                        <button type="submit"
-                                            class="btn btn-primary btn-sm">Hitung</button>
-                                    </div>
-                                </form>
+                                <div class="d-flex gap-2">
+                                    <form action="{{ url('/manage_barang') }}" method="GET"
+                                        class="row g-2 align-items-end">
+                                        <div class="col-8">
+                                            <label for="jenis_barang"
+                                                class="form-label visually-hidden">Jenis</label>
+                                            <select id="jenis_barang" name="jenis_barang"
+                                                class="form-select form-select-sm">
+                                                <option value="">-- Pilih Jenis --</option>
+                                                <option value="M"
+                                                    {{ request('jenis_barang') == 'M' ? 'selected' : '' }}>
+                                                    M (Makanan)</option>
+                                                <option value="K"
+                                                    {{ request('jenis_barang') == 'K' ? 'selected' : '' }}>
+                                                    K (Kebutuhan)</option>
+                                                <option value="J"
+                                                    {{ request('jenis_barang') == 'J' ? 'selected' : '' }}>
+                                                    J (Jasa)</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-4 d-grid">
+                                            <button type="submit"
+                                                class="btn btn-primary btn-sm">Hitung</button>
+                                        </div>
+                                    </form>
+                                </div>
                                 <p class="mt-2 text-muted small mb-0">Pilih jenis barang di atas
                                     lalu tekan <strong>Hitung</strong> untuk melihat jumlah item
                                     sesuai jenis.</p>
                             </div>
-
                             <div class="col-md-6">
                                 <div class="d-flex align-items-center justify-content-end">
                                     <div class="me-3 text-end">
@@ -117,7 +118,8 @@
                                         <div class="d-flex align-items-center">
                                             <div class="d-inline-flex align-items-center justify-content-center rounded-circle"
                                                 style="width:80px;height:80px;background:linear-gradient(135deg,#4f46e5,#06b6d4);box-shadow:0 8px 24px rgba(79,70,229,0.18);">
-                                                <i class="bi bi-box-seam text-white" style="font-size:34px;"></i>
+                                                <i class="bi bi-box-seam text-white"
+                                                    style="font-size:34px;"></i>
                                             </div>
                                             <div class="ms-3">
                                                 <div class="fs-3 fw-bold">
@@ -137,6 +139,30 @@
                 <!-- Barang Table -->
                 <div class="card">
                     <div class="card-body p-0">
+                        <div class="p-3 border-bottom">
+                            @if (!empty($showAll))
+                                <strong>Menampilkan: Semua Barang</strong>
+                            @else
+                                <strong>Menampilkan: Barang Aktif</strong>
+                            @endif
+                        </div>
+                        <div class="m-2 align-self-end">
+                            @php
+                                // preserve existing query params except show_all
+                                $allUrl = request()->fullUrlWithQuery([
+                                    'show_all' => 1,
+                                ]);
+                                $activeUrl = request()->fullUrlWithQuery([
+                                    'show_all' => 0,
+                                ]);
+                            @endphp
+                            <div class="btn-group btn-group-sm" role="group">
+                                <a href="{{ $activeUrl }}"
+                                    class="btn {{ empty(request('show_all')) || request('show_all') == '0' ? 'btn-outline-primary' : 'btn-light' }}">Aktif</a>
+                                <a href="{{ $allUrl }}"
+                                    class="btn {{ request('show_all') == '1' ? 'btn-outline-primary' : 'btn-light' }}">Semua</a>
+                            </div>
+                        </div>
                         <div class="table-responsive">
                             <table class="table table-striped mb-0">
                                 <thead>

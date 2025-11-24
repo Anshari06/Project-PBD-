@@ -10,7 +10,14 @@ class BarangController extends Controller
 {
     public function index(Request $request)
     {
-        $sql = 'SELECT * FROM barang_aktif ORDER BY idbarang';
+        // allow toggling between active-only (default) and all barang via ?show_all=1
+        $showAll = $request->boolean('show_all');
+
+        if ($showAll) {
+            $sql = 'SELECT * FROM barang ORDER BY idbarang';
+        } else {
+            $sql = 'SELECT * FROM barang_aktif ORDER BY idbarang';
+        }
         $barangs = DB::select($sql);
 
         // ini buat nangkep inputan dari form
@@ -31,6 +38,6 @@ class BarangController extends Controller
             }
         }
 
-        return view('manage_barang.manage_barang', compact('barangs', 'cariBarangs', 'HitungBarang'));
+        return view('manage_barang.manage_barang', compact('barangs', 'cariBarangs', 'HitungBarang', 'showAll'));
     }
 }

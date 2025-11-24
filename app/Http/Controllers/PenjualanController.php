@@ -27,8 +27,10 @@ class PenjualanController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'idbarang' => 'required|array',
-            'jumlah'   => 'required|array'
+            'idbarang'   => 'required|array',
+            'idbarang.*' => 'required|integer|distinct',
+            'jumlah'     => 'required|array',
+            'jumlah.*'   => 'required|integer|min:1'
         ]);
 
         $idbarang = $request->input('idbarang');   // array

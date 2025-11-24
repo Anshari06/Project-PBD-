@@ -25,9 +25,29 @@ class PengadaanController extends Controller
 
     public function store(Request $request)
     {
+        // server-side validation: require arrays and jumlah >= 1
+        $request->validate([
+            'idvendor' => 'required|integer',
+            'idbarang' => 'required|array|min:1',
+            'idbarang.*' => 'required|integer',
+            'jumlah' => 'required|array',
+            'jumlah.*' => 'required|integer|min:1',
+        ], [
+            'jumlah.*.min' => 'Jumlah barang harus minimal 1 (tidak boleh 0).',
+            'jumlah.*.integer' => 'Jumlah harus berupa angka bulat.',
+        ]);
+
+        $idbarang = $request->input('idbarang');
+        $jumlah = $request->input('jumlah');
+
+        // ensure arrays have same length
+        if (count($idbarang) !== count($jumlah)) {
+            return back()->withInput()->with('error', 'Jumlah item dan daftar barang tidak cocok.');
+        }
+
         // Convert array ke string "1,2,3"
-        $idbarang_list = implode(',', $request->idbarang);
-        $jumlah_list = implode(',', $request->jumlah);
+        $idbarang_list = implode(',', $idbarang);
+        $jumlah_list = implode(',', $jumlah);
 
         $result = DB::select("CALL tambah_pengadaan(?, ?, ?, ?)", [
             $request->idvendor,
@@ -36,7 +56,7 @@ class PengadaanController extends Controller
             $jumlah_list
         ]);
 
-        $idpengadaan = $result[0]->idpengadaan;
+        $idpengadaan = $result[0]->idpengadaan ?? null;
 
         return redirect()->route('pengadaan.manage_pengadaan')
             ->with('success', 'Pengadaan berhasil dibuat dengan SP');

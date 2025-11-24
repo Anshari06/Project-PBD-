@@ -22,7 +22,7 @@
         <div class="card mb-3">
             <div class="card-body">
                 <div class="row">
-                    <div class="col-md-3"><strong>No. Nota:</strong>
+                    <div class="col-md-3"><strong>ID Penjualan:</strong>
                         {{ $penjualan->no_nota ?? ($penjualan->idpenjualan ?? '-') }}
                     </div>
                     <div class="col-md-3"><strong>Tanggal:</strong>

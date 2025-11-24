@@ -36,90 +36,52 @@ class PenerimaanController extends Controller
             'idbarang.*'  => 'required|integer|exists:barang,idbarang',
             'jumlah'      => 'required|array|min:1',
             'jumlah.*'    => 'required|integer|min:1',
-            'tgl_penerimaan' => 'nullable|date',
         ]);
 
-        $idpengadaan = (int) $data['idpengadaan'];
-        $ids = $data['idbarang'];
-        $jmls = $data['jumlah'];
-        $iduser = Auth::id() ?? $request->input('iduser');
+        $idpengadaan = (int)$data['idpengadaan'];
+        $ids  = $data['idbarang'];
+        $qtys = $data['jumlah'];
+        $iduser = Auth::id();
 
-        // array length check
-        if (count($ids) !== count($jmls)) {
-            return redirect()->back()->withInput()->with('error', 'Jumlah barang dan jumlah terima tidak sesuai.');
-        }
-
-        // ambil data detail_pengadaan langsung dari tabel (bukan dari view)
-        $detailRows = DB::table('detail_pengadaan as d')
-            ->leftJoin('barang as b', 'd.idbarang', '=', 'b.idbarang')
-            ->where('d.idpengadaan', $idpengadaan)
-            ->whereIn('d.idbarang', $ids)
-            ->select('d.idbarang', 'd.jumlah as jumlah_dipesan', DB::raw('IFNULL((
-            SELECT SUM(dp.jumlah_terima) FROM detail_penerimaan dp
-            JOIN penerimaan p2 ON p2.idpenerimaan = dp.idpenerimaan
-            WHERE p2.idpengadaan = d.idpengadaan AND dp.idbarang = d.idbarang
-        ),0) as jumlah_diterima'))
-            ->get()
-            ->keyBy('idbarang');
-
-        $errors = [];
-        foreach ($ids as $i => $bid) {
-            $bid = (int) $bid;
-            $reqQty = (int) ($jmls[$i] ?? 0);
-            $row = $detailRows->get($bid);
-
-            $ordered = $row ? (int)$row->jumlah_dipesan : 0;
-            $received = $row ? (int)$row->jumlah_diterima : 0;
-            $sisa = max(0, $ordered - $received);
-
-            if ($ordered === 0) {
-                $errors[] = "Barang ID {$bid} tidak ditemukan di pengadaan.";
-                continue;
-            }
-
-            if ($reqQty > $sisa) {
-                $errors[] = "Permintaan untuk barang ID {$bid} melebihi sisa ({$sisa}). DEEEMN LU GA FINESHEEYT BRUH";
-            }
-        }
-
-        if (!empty($errors)) {
-            return redirect()->back()->withInput()->with('error', implode(' ', $errors));
+        if (count($ids) !== count($qtys)) {
+            return back()->with('error', 'Jumlah baris barang tidak sesuai.');
         }
 
         try {
-            // panggil SP per item (SP Tambah_penerimaan menangani 1 barang)
             DB::beginTransaction();
-            for ($i = 0; $i < count($ids); $i++) {
-                $bid = (int)$ids[$i];
-                $qty = (int)$jmls[$i];
 
-                // log lebih mudah debugging
-                logger()->info('Calling Tambah_penerimaan item', [
-                    'idpengadaan' => $idpengadaan,
-                    'idbarang' => $bid,
-                    'qty' => $qty,
-                    'iduser' => $iduser
-                ]);
+            $idpenerimaan = null; // akan diisi setelah pemanggilan pertama
 
-                // SP signature: Tambah_penerimaan(p_idpengadaan INT, p_idbarang INT, p_jumlah_terima INT, p_iduser INT)
-                DB::select('CALL Tambah_penerimaan(?, ?, ?, ?)', [
-                    $idpengadaan,
-                    $bid,
-                    $qty,
-                    $iduser,
-                ]);
+            foreach ($ids as $i => $idb) {
+
+                // CALL SP
+                $result = DB::select(
+                    'CALL Tambah_penerimaan(?, ?, ?, ?, ?)',
+                    [
+                        $idpenerimaan,      // NULL pada loop pertama → buat header penerimaan
+                        $idpengadaan,
+                        (int)$idb,
+                        (int)$qtys[$i],
+                        $iduser
+                    ]
+                );
+
+                // Ambil idpenerimaan dari SP jika masih null
+                if ($idpenerimaan === null) {
+                    $idpenerimaan = $result[0]->idpenerimaan;
+                }
             }
+
             DB::commit();
 
-            return redirect('/manage_penerimaan')->with('success', 'Penerimaan berhasil ditambahkan.');
+            return redirect('/manage_penerimaan')
+                ->with('success', 'Penerimaan berhasil ditambahkan.');
         } catch (\Exception $e) {
             DB::rollBack();
-            logger()->error('Tambah penerimaan failed: ' . $e->getMessage(), [
-                'payload' => $request->all()
-            ]);
-            return redirect()->back()->withInput()->with('error', 'Gagal menambah penerimaan: ' . $e->getMessage());
+            return back()->withInput()->with('error', $e->getMessage());
         }
     }
+
 
 
     public function show($id)

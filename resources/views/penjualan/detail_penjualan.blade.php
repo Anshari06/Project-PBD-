@@ -28,15 +28,9 @@
                     <div class="col-md-3"><strong>Tanggal:</strong>
                         {{ isset($penjualan->created_at) ? \Carbon\Carbon::parse($penjualan->created_at)->format('d M Y H:i') : $penjualan->tanggal ?? '-' }}
                     </div>
-                    <div class="col-md-3"><strong>Pelanggan:</strong>
-                        {{ $penjualan->pelanggan ?? '-' }}</div>
                     <div class="col-md-3 text-end">
-                        <strong>Total:</strong>
-                        {{ isset($penjualan->total) ? number_format($penjualan->total, 0, ',', '.') : '-' }}
-                        <div class="mt-1">
-                            <span
-                                class="badge {{ ($penjualan->status ?? 0) == 1 ? 'bg-success' : 'bg-secondary' }}">{{ ($penjualan->status ?? 0) == 1 ? 'Lunas' : 'Belum' }}</span>
-                        </div>
+                        <strong>Total Nilai:</strong>
+                        {{ isset($penjualan->total_nilai) ? number_format($penjualan->total_nilai, 0, ',', '.') : '-' }}
                     </div>
                 </div>
             </div>

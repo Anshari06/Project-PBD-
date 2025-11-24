@@ -31,10 +31,6 @@ class BarangController extends Controller
             }
         }
 
-
-        
-
-
         return view('manage_barang.manage_barang', compact('barangs', 'cariBarangs', 'HitungBarang'));
     }
 }

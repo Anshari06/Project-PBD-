@@ -13,11 +13,6 @@
         </div>
     </div>
 
-    <div>
-        <a href="{{ url('/detail_penjualan') }}" class="btn btn-info text-light btn-sm mb-3">Go to Detail
-            Penjualan</a>
-    </div>
-
     <!-- Inline Add Penjualan Form -->
     <div class="card mb-3">
         <div class="card-header py-2">
@@ -31,20 +26,6 @@
                     <input type="date" name="tanggal" id="tanggal"
                         class="form-control form-control-sm" required
                         value="{{ old('tanggal', date('Y-m-d')) }}">
-                </div>
-
-                <div class="col-md-3">
-                    <label for="no_nota" class="form-label">No. Nota</label>
-                    <input type="text" name="no_nota" id="no_nota"
-                        class="form-control form-control-sm" placeholder="No. Nota" required
-                        value="{{ old('no_nota') }}">
-                </div>
-
-                <div class="col-md-4">
-                    <label for="pelanggan" class="form-label">Pelanggan</label>
-                    <input type="text" name="pelanggan" id="pelanggan"
-                        class="form-control form-control-sm" placeholder="Nama Pelanggan"
-                        value="{{ old('pelanggan') }}">
                 </div>
 
                 <div class="col-12">
@@ -65,8 +46,8 @@
                                         <option value="">-- Pilih Barang --</option>
                                         @if (!empty($barangs))
                                             @foreach ($barangs as $b)
-                                                <option value="{{ $b->idbarang }}"
-                                                    data-harga="{{ $b->harga }}">{{ $b->nama }}
+                                                <option value="{{ $b->idbarang }}">
+                                                    {{ $b->nama_barang }}
                                                 </option>
                                             @endforeach
                                         @endif
@@ -124,8 +105,8 @@
                             <th style="width:70px">#</th>
                             <th style="width:70px">ID</th>
                             <th scope="col" class="text-center">Tanggal</th>
-                            <th style="width:150px">Subtotal</th>
-                            <th>User</th>
+                            <th style="width:150px">nama barang</th>
+                            <th class="text-center">jumlah jual</th>
                             <th style="width:140px">Total Nilai</th>
                             <th style="width:180px">Actions</th>
                         </tr>
@@ -137,14 +118,15 @@
                                 <td>{{ $penjualan->idpenjualan }}</td>
                                 <td scope="col" class="text-center">
                                     {{ $penjualan->created_at ?? '-' }}</td>
-                                <td>{{ $penjualan->subtotal_nilai ?? '-' }}</td>
-                                <td>{{ $penjualan->user->username ?? '-' }}</td>
+                                <td>{{ $penjualan->nama_barang ?? '-' }}</td>
+                                <td scope="col" class="text-center">
+                                    {{ $penjualan->jumlah ?? '-' }}</td>
                                 <td>{{ isset($penjualan->total_nilai) ? number_format($penjualan->total_nilai, 0, ',', '.') : '-' }}
                                 </td>
                                 <td>
                                     <a href="{{ url('/manage_penjualan/' . ($penjualan->id ?? $penjualan->idpenjualan) . '/edit') }}"
                                         class="btn btn-sm btn-warning me-1">Edit</a>
-                                    <a href="{{ url('/manage_penjualan/' . ($penjualan->id ?? $penjualan->idpenjualan)) }}"
+                                    <a href="{{ url('/detail_penjualan/' . ($penjualan->id ?? $penjualan->idpenjualan)) }}"
                                         class="btn btn-sm btn-info me-1">View</a>
                                     <form
                                         action="{{ url('/manage_penjualan/' . ($penjualan->id ?? $penjualan->idpenjualan)) }}"

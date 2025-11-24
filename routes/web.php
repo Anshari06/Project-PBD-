@@ -30,6 +30,9 @@ Route::middleware(['auth', 'cekrole:1'])->group(function () {
     Route::get('/manage_penjualan', [App\Http\Controllers\PenjualanController::class, 'index']);
     // Detail Penjualan
     Route::get('/detail_penjualan', [App\Http\Controllers\DetailPenjualanController::class, 'index']);
+    Route::post('/manage_penjualan', [App\Http\Controllers\PenjualanController::class, 'store'])->name('penjualan.store');
+    Route::get('/detail_penjualan/{id}', [App\Http\Controllers\PenjualanController::class, 'show'])->name('penjualan.detail_penjualan');
+    
     // Manage Penerimaan(CRUD)
     Route::get('/manage_penerimaan', [App\Http\Controllers\PenerimaanController::class, 'index']);
     Route::get('/pengadaan/{id}/items', [App\Http\Controllers\PenerimaanController::class, 'getPengadaanItems']);
